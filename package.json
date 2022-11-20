@@ -1,0 +1,27 @@
+{
+  "name": "lawey",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Program-s-Key/lawey.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Program-s-Key/lawey/issues"
+  },
+  "homepage": "https://github.com/Program-s-Key/lawey#readme",
+  "devDependencies": {
+    "sass-loader": "^13.0.2",
+    "sass-resources-loader": "^2.2.5"
+  },
+  "dependencies": {
+    "moment": "^2.29.4",
+    "uview-ui": "^2.0.31"
+  }
+}

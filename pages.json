@@ -1,0 +1,59 @@
+{
+	"easycom": {
+		"^u-(.*)": "uview-ui/components/u-$1/u-$1.vue"
+	},
+	"lazyCodeLoading": "requiredComponents",
+	"pages": [{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "画作",
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/draw/draw",
+			"style": {
+				"navigationBarTitleText": "画头像",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/mine/mine",
+			"style": {
+				"navigationBarTitleText": "我的",
+				"enablePullDownRefresh": false
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "画头酱",
+		"navigationBarBackgroundColor": "#6884FF",
+		"backgroundColor": "#F6F6F6"
+	},
+	"tabBar": {
+		"backgroundColor": "#fff",
+		"color": "#7C7C7C",
+		"selectedColor": "#6884FF",
+		"list": [{
+				"pagePath": "pages/index/index",
+				"text": "画作",
+				"iconPath": "static/tabs-icon/home.png",
+				"selectedIconPath": "static/tabs-icon/home-active.png"
+			},
+			{
+				"pagePath": "pages/draw/draw",
+				"text": "画头像",
+				"iconPath": "static/tabs-icon/lawey.png",
+				"selectedIconPath": "static/tabs-icon/lawey-active.png"
+			},
+			{
+				"pagePath": "pages/mine/mine",
+				"text": "我的",
+				"iconPath": "static/tabs-icon/mine.png",
+				"selectedIconPath": "static/tabs-icon/mine-active.png"
+			}
+		]
+	},
+	"uniIdRouter": {}
+}
+}
