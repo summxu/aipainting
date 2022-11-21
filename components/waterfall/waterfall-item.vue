@@ -4,11 +4,6 @@
 			<image :src="params.url" mode="widthFix" @load="emitHeight" @error="emitHeight"></image>
 			<view class="content">
 				<view>{{params.title}}</view>
-				<view class="money">{{params.money}}元</view>
-				<view style="margin: 0 0 8rpx 0;">
-					<text class="label">{{params.label}}</text>
-				</view>
-				<view class="shop-name">{{params.shop}}</view>
 			</view>
 		</view>
 	</view>

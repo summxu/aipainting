@@ -7,7 +7,7 @@
       "path": "pages/index/index",
       "style": {
         "navigationBarTitleText": "画作",
-        "enablePullDownRefresh": false
+        "enablePullDownRefresh": true
       }
     }, {
       "path": "pages/draw/draw",
@@ -22,6 +22,13 @@
         "navigationBarTitleText": "我的",
         "enablePullDownRefresh": false
       }
+    }, {
+      "path": "pages/index/detail/detail",
+      "style": {
+        "navigationBarTitleText": "画作详情",
+        "enablePullDownRefresh": false
+      }
+
     }
   ],
   "globalStyle": {
@@ -43,8 +50,8 @@
       {
         "pagePath": "pages/draw/draw",
         "text": "画头像",
-        "iconPath": "static/tabs-icon/lawey.png",
-        "selectedIconPath": "static/tabs-icon/lawey-active.png"
+        "iconPath": "static/tabs-icon/draw.png",
+        "selectedIconPath": "static/tabs-icon/draw-active.png"
       },
       {
         "pagePath": "pages/mine/mine",

@@ -3,14 +3,14 @@ import store from './store' //全局引入
 import uView from "uview-ui";
 import moment from 'moment'
 
-moment.locale('zh-cn');         // zh-cn
+moment.locale('zh-cn'); // zh-cn
 
 Vue.use(uView);
 
 // 全局分享
-const $x = {}; 
+const $x = {};
 Vue.prototype.$x = $x;
-let share=require('./utils/share.js');
+let share = require('./utils/share.js');
 Vue.mixin(share);
 
 // 自定义方法
@@ -26,8 +26,8 @@ const goBack = () => {
   });
 }
 
-Vue.prototype.$toPage=toPage;
-Vue.prototype.$goBack=goBack;
+Vue.prototype.$toPage = toPage;
+Vue.prototype.$goBack = goBack;
 
 Vue.prototype.$store = store //实例化
 
@@ -44,7 +44,9 @@ app.$mount()
 // #endif
 
 // #ifdef VUE3
-import { createSSRApp } from 'vue'
+import {
+  createSSRApp
+} from 'vue'
 export function createApp() {
   const app = createSSRApp(App)
   return {

@@ -22,7 +22,7 @@ let list = ()=>{
 			for (let i = 0; i < 10; i++) {
 				res.push({
 					id:i+1,
-					url:`/uni_modules/helang-waterfall/static/waterfall/${random(0,3)}.jpg?t=${new Date().getTime()}`,
+					url:`/static/waterfall/${random(0,3)}.jpg?t=${new Date().getTime()}`,
 					title: titles[random(0, titles.length)],
 					money: random(9, 9999),
 					label:'官方自营',
