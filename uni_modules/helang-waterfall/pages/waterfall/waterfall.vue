@@ -39,10 +39,10 @@
 </template>
 
 <script>
-	import helangWaterfallList from "@/components/waterfall/waterfall-list"
+	import helangWaterfallList from "@/uni_modules/helang-waterfall/components/waterfall/waterfall-list"
 	
 	// 列表接口模拟数据
-	import mockData from './waterfall-list.js'
+	import mockData from '../../mock-data/waterfall-list.js'
 	
 	export default {
 		components: {
