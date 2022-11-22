@@ -23,11 +23,13 @@
     </view>
 
     <view v-if="!isExample" class="mt flex-row pd">
-      <u-button class="button_bottom" type="success" shape="circle" text="保存图片"></u-button>
+      <view class="button_bottom">
+        <u-button type="success" shape="circle" text="保存图片"></u-button>
+      </view>
       <u-button type="primary" shape="circle" text="使用当前关键词让画头酱再画一次"></u-button>
     </view>
 
-     <view v-else class="mt flex-row pd">
+    <view v-else class="mt flex-row pd">
       <u-button type="primary" shape="circle" text="使用当前关键词开始作画"></u-button>
     </view>
 
@@ -67,7 +69,7 @@ export default {
 }
 
 .button_bottom {
-  width: 200px;
+  width: 200rpx;
   margin-right: 10px;
 }
 </style>

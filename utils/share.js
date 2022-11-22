@@ -11,7 +11,7 @@ module.exports = {
 			this.$x.pageRouter = (pages[pages.length - 1]).route 
 			if(this.$x.pageRouter){
 				this.$x.mpShare = {
-					title: '画头酱-只能AI绘画平台！', // 分享标题
+					title: '画头酱-智能AI绘画平台！', // 分享标题
 					path: '/pages/index/index', // 默认为当前页面路径
 					imageUrl: '/static/share.jpg' // 默认为当前页面的截图
 				}

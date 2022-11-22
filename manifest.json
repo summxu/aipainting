@@ -1,5 +1,5 @@
 {
-    "name" : "lawyer",
+    "name" : "aipainting",
     "appid" : "__UNI__1E811ED",
     "description" : "",
     "versionName" : "1.0.0",
@@ -50,19 +50,15 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "wxe5b14cd7e6643ed7",
+        "appid" : "wx8ae85a8b8e01c71f",
         "setting" : {
             "urlCheck" : false,
-            "postcss" : false,
-            "es6" : false,
+            "postcss" : true,
+            "es6" : true,
             "minified" : true
         },
         "usingComponents" : true,
-        "permission" : {
-            "scope.userLocation" : {
-                "desc" : "将使用您的位置查找本地律师"
-            }
-        }
+        "permission" : {}
     },
     "mp-alipay" : {
         "usingComponents" : true

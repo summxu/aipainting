@@ -26,7 +26,9 @@
       </view>
 
       <view class="keyword-boxs flex-wrap mt">
-        <u-tag :borderColor="item.color" v-for="(item,index) in tagsList" :key="index" :bgColor="item.color" size="mini" class="xcc-tag" :text="item.text"></u-tag>
+        <view v-for="(item,index) in tagsList" :key="index" class="xcc-tag">
+          <u-tag :borderColor="item.color" :bgColor="item.color" size="mini" :text="item.text"></u-tag>
+        </view>
       </view>
     </view>
 
@@ -41,12 +43,16 @@
       </view>
 
       <view class="keyword-boxs flex-wrap mt">
-        <view @click="clickStyleHandle(item)" v-for="(item,index) in 10 " :key="index" class="style_item flex-col justify-center ">
-          <view class="style_img_box">
-            <image :class="['style_img',style === item ? 'style_img_box_active' : null]" src="../../static/placeholder.png" alt="" />
-          </view>
-          <view :class="['style_text',style === item ? 'style_text_active' : null]">油画</view>
-        </view>
+        <u-grid col="4" :border="false">
+          <u-grid-item @click="clickStyleHandle(item)" v-for="(item,index) in 10 " :key="index">
+            <view class="style_item ">
+              <view class="style_img_box">
+                <image :class="['style_img',style === item ? 'style_img_box_active' : null]" src="../../static/placeholder.png" alt="" />
+              </view>
+              <view :class="['style_text',style === item ? 'style_text_active' : null]">油画</view>
+            </view>
+          </u-grid-item>
+        </u-grid>
       </view>
     </view>
 
@@ -72,12 +78,12 @@ export default {
         },
         {
           id: 2,
-          text: '二次元',
+          text: '二次',
           color: rdmRgbColor()
         },
         {
           id: 3,
-          text: '赛博朋克',
+          text: '赛博克',
           color: rdmRgbColor()
         },
         {
@@ -107,7 +113,7 @@ export default {
         },
         {
           id: 9,
-          text: '赛博朋克',
+          text: '赛博克',
           color: rdmRgbColor()
         },
         {
@@ -163,7 +169,7 @@ export default {
 }
 
 .style_item {
-  margin: 0 16px 10px;
+  margin-bottom: 8px;
 }
 .style_img {
   height: 100%;
@@ -185,5 +191,9 @@ export default {
 .style_text {
   text-align: center;
   margin-top: 5px;
+}
+
+.xcc_label {
+  margin-bottom: 5px;
 }
 </style>
