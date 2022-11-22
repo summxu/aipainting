@@ -111,13 +111,6 @@ export default {
   },
   methods: {
     onClick(item) {},
-    shareHandle() {
-      this.$x.mpShare = {
-        title: '画头酱-智能AI绘画平台！', // 分享标题
-        path: '/pages/index/index', // 默认为当前页面路径
-        imageUrl: '/static/share.jpg' // 默认为当前页面的截图
-      }
-    }
   }
 }
 </script>
@@ -200,6 +193,5 @@ page {
 .item-price {
   margin-top: 8px;
   font-size: 15px;
-  color: $uni-color-primary;
 }
 </style>

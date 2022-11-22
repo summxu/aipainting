@@ -1,6 +1,6 @@
 <template>
   <view class="page-bottom">
-    <image style="width: 100%;height: 260px;" src="../../static/touxiang2_head.png" />
+    <image mode="widthFix" style="width: 100%;" src="../../static/touxiang2_head.png" />
     <view style="margin-top: -3px" class="container">
       <view class="item-top flex-row justify-between items-center">
         <view>
