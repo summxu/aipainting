@@ -172,6 +172,11 @@ page {
   justify-content: flex-start !important;
 }
 
+.option_label .u-button--active::before,
+.option_label1 .u-button--active::before {
+  background-color: transparent !important;
+}
+
 .option_label1 .u-button {
   color: $u-main-color !important;
 }
