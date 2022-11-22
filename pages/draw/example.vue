@@ -36,7 +36,7 @@
   import helangWaterfallList from "@/components/waterfall/waterfall-list"
 
   // 列表接口模拟数据
-  import mockData from './waterfall-list.js'
+  import mockData from '../index/waterfall-list.js'
 
   export default {
     components: {
@@ -84,7 +84,7 @@
       // 瀑布流组件点击事件
       onClick(data, index, tag) {
         uni.navigateTo({
-          url: `/pages/index/detail?id=${data.id}`,
+          url: `/pages/index/detail?id=${data.id}&type=2`,
         });
       },
       // 瀑布流组件渲染完成

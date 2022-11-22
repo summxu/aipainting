@@ -32,7 +32,7 @@
   }
 
   html {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   body {
@@ -63,6 +63,11 @@
   .flex-col {
     display: flex;
     flex-direction: column;
+  }
+
+  .flex-wrap {
+    display: flex;
+    flex-wrap: wrap;
   }
 
   .justify-start {
@@ -116,7 +121,6 @@
     background-color: #fff;
   }
 
-
   .page-bottom {
     padding-bottom: 15px
   }
@@ -136,7 +140,6 @@
   .pd {
     padding: 10px;
   }
-  
     
   .xcc_label {
     font-size: 13px;

@@ -23,14 +23,29 @@
         "enablePullDownRefresh": false
       }
     }, {
-      "path": "pages/index/detail/detail",
+      "path": "pages/index/detail",
       "style": {
         "navigationBarTitleText": "画作详情",
         "enablePullDownRefresh": false
       }
-
+    },
+    {
+      "path": "pages/webview/webview",
+      "style": {
+        "navigationBarTitleText": "webview",
+        "enablePullDownRefresh": false
+      }
     }
-  ],
+      ,{
+            "path" : "pages/draw/example",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "生成示例",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
   "globalStyle": {
     "navigationBarTextStyle": "white",
     "navigationBarTitleText": "画头酱",

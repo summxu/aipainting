@@ -4,7 +4,7 @@
       <u-avatar :src="avatar" mode="square" size="50" class="u-avatar"></u-avatar>
       <view class="personal-info">
         <view class="">小兵徐徐</view>
-        <view class="">id:216361237</view>
+        <view class="">ID：216361237</view>
       </view>
     </view>
 
@@ -14,7 +14,7 @@
 
       <view class="flex-row mb">
         <u-button class="button_bottom1" type="primary" shape="circle" text="签到"></u-button>
-        <u-button class="button_bottom" type="success" shape="circle" text="充值"></u-button>
+        <u-button @click="show = true" class="button_bottom" type="success" shape="circle" text="充值"></u-button>
       </view>
 
       <view class="xcc_label mb">观看广告获得点数 </view>
@@ -26,23 +26,31 @@
 
     <view class="options_box">
       <u-cell-group>
-        <u-cell icon="share" title="停车坐爱枫林晚" :isLink="true" arrow-direction="right">
+        <u-cell icon="share" title="分享到群里" :isLink="true" arrow-direction="right">
           <template #label>
-            <view class="option_label">分享到群里</view>
+            <view class="option_label">免费获取点数！</view>
           </template>
         </u-cell>
-        <u-cell icon="question-circle-fill" title="使用帮助" :isLink="true" arrow-direction="right"></u-cell>
-        <u-cell icon="calendar-fill" title="服务协议" :isLink="true" arrow-direction="right"></u-cell>
+        <u-cell @click="$toPage('/pages/webview/webview?type=1')" icon="question-circle-fill" title="使用帮助" :isLink="true" arrow-direction="right"></u-cell>
+        <u-cell @click="$toPage('/pages/webview/webview?type=2')" icon="calendar-fill" title="服务协议" :isLink="true" arrow-direction="right"></u-cell>
         <u-cell icon="server-fill" title="联系客服" :isLink="true" arrow-direction="right"></u-cell>
       </u-cell-group>
     </view>
 
     <!-- 购买弹出 -->
-    <u-popup :show="show" :round="10" mode="bottom">
-      <view class="buy-items flex-row justify-aroud">
+    <u-popup :show="show" closeOnClickOverlay @close="show = false" :round="10" mode="bottom">
+      <view class="buy-items flex-row justify-around">
        <view class="buy-item">
-         <view class="item-title">20点</view>
-         <view class="item-price">￥1.00</view>
+         <view class="item-title">20 点</view>
+         <view class="item-price"><text style="color:red">￥</text>1.00</view>
+       </view>
+       <view class="buy-item">
+         <view class="item-title">100 点</view>
+         <view class="item-price"><text style="color:red">￥</text>8.00</view>
+       </view>
+       <view class="buy-item">
+         <view class="item-title">2000 点</view>
+         <view class="item-price"><text style="color:red">￥</text>100.00</view>
        </view>
       </view>
     </u-popup>
@@ -130,12 +138,19 @@
     color: $uni-color-error;
   }
   
-  .buy-items{}
+  .buy-items{
+    padding: 30px;
+  }
   .buy-item{
     padding: 10px 20px;
     border: 1px solid $uni-color-primary;
+    background-color: #fafafa;
     border-radius: 8px;
   }
   .item-title{}
-  .item-price{}
+  .item-price{
+    margin-top: 8px;
+    font-size: 15px;
+    color: $uni-color-primary;
+  }
 </style>
