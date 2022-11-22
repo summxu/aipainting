@@ -194,7 +194,7 @@
 
 <style lang="scss">
   page {
-    background-color: #f3f3f3;
+    background-color: #E8E8E8;
   }
 
   .load-txt {

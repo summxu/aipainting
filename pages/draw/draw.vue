@@ -1,8 +1,7 @@
 <template>
   <view class="page-bottom">
-    <u-swiper radius="0" height="260" :list="list2" keyName="image" :autoplay="true" :interval="10000" circular></u-swiper>
-
-    <view class="container mt ">
+    <image style="width: 100%;height: 260px;" src="../../static/touxiang2_head.png" />
+    <view style="margin-top: -3px" class="container">
       <view class="item-top flex-row justify-between items-center">
         <view>
           <view class="keyword_label">关键词</view>
@@ -130,20 +129,6 @@ export default {
           id: 16,
           text: '二次元',
           color: rdmRgbColor()
-        }
-      ],
-      list2: [
-        {
-          image: 'https://cdn.uviewui.com/uview/swiper/swiper2.png',
-          title: '昨夜星辰昨夜风，画楼西畔桂堂东'
-        },
-        {
-          image: 'https://cdn.uviewui.com/uview/swiper/swiper1.png',
-          title: '身无彩凤双飞翼，心有灵犀一点通'
-        },
-        {
-          image: 'https://cdn.uviewui.com/uview/swiper/swiper3.png',
-          title: '谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳'
         }
       ]
     }

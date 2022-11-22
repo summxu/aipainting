@@ -3,13 +3,15 @@
     "^u-(.*)": "uview-ui/components/u-$1/u-$1.vue"
   },
   "lazyCodeLoading": "requiredComponents",
-  "pages": [{
+  "pages": [
+    {
       "path": "pages/index/index",
       "style": {
         "navigationBarTitleText": "画作",
         "enablePullDownRefresh": true
       }
-    }, {
+    },
+    {
       "path": "pages/draw/draw",
       "style": {
         "navigationBarTitleText": "画头像",
@@ -22,7 +24,8 @@
         "navigationBarTitleText": "我的",
         "enablePullDownRefresh": false
       }
-    }, {
+    },
+    {
       "path": "pages/index/detail",
       "style": {
         "navigationBarTitleText": "画作详情",
@@ -35,28 +38,27 @@
         "navigationBarTitleText": "webview",
         "enablePullDownRefresh": false
       }
+    },
+    {
+      "path": "pages/draw/example",
+      "style": {
+        "navigationBarTitleText": "生成示例",
+        "enablePullDownRefresh": false
+      }
     }
-      ,{
-            "path" : "pages/draw/example",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "生成示例",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-    ],
+  ],
   "globalStyle": {
-    "navigationBarTextStyle": "white",
+    "navigationBarTextStyle": "black",
     "navigationBarTitleText": "画头酱",
-    "navigationBarBackgroundColor": "#6884FF",
-    "backgroundColor": "#F6F6F6"
+    "navigationBarBackgroundColor": "#E8E8E8",
+    "backgroundColor": "#E8E8E8"
   },
   "tabBar": {
     "backgroundColor": "#fff",
     "color": "#7C7C7C",
-    "selectedColor": "#6884FF",
-    "list": [{
+    "selectedColor": "#EAB997",
+    "list": [
+      {
         "pagePath": "pages/index/index",
         "text": "画作",
         "iconPath": "static/tabs-icon/home.png",
