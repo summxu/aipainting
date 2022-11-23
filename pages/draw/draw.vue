@@ -20,13 +20,12 @@
           <view class="keyword_label">推荐关键词</view>
         </view>
         <view>
-          <u-button type="primary" size="mini" text="换一组"></u-button>
+          <u-button @click="getPromptSuggest" type="primary" size="mini" text="换一组"></u-button>
         </view>
       </view>
-
       <view class="keyword-boxs flex-wrap mt">
         <view v-for="(item,index) in tagsList" :key="index" class="xcc-tag">
-          <u-tag :borderColor="item.color" :bgColor="item.color" size="mini" :text="item.text"></u-tag>
+          <u-tag @click="selectTagesHandle(item)" :borderColor="item.color" :bgColor="item.color" size="mini" :text="item.serverData.chinesePrompt"></u-tag>
         </view>
       </view>
     </view>
@@ -43,12 +42,12 @@
 
       <view class="keyword-boxs flex-wrap mt">
         <u-grid col="4" :border="false">
-          <u-grid-item @click="clickStyleHandle(item)" v-for="(item,index) in 10 " :key="index">
+          <u-grid-item @click="clickStyleHandle(item)" v-for="(item,index) in styleList " :key="index">
             <view class="style_item ">
               <view class="style_img_box">
-                <image :class="['style_img',style === item ? 'style_img_box_active' : null]" src="../../static/placeholder.png" alt="" />
+                <image :class="['style_img',style === item.serverData.objectId ? 'style_img_box_active' : null]" :src="item.serverData.image.serverData.url" alt="" />
               </view>
-              <view :class="['style_text',style === item ? 'style_text_active' : null]">油画</view>
+              <view :class="['style_text',style === item.serverData.objectId ? 'style_text_active' : null]">{{item.serverData.title}}</view>
             </view>
           </u-grid-item>
         </u-grid>
@@ -64,81 +63,38 @@
 
 <script>
 import { rdmRgbColor } from '@/utils'
+import AV from '../../utils/av-core-min'
 export default {
   data() {
     return {
       value1: '',
       style: null,
-      tagsList: [
-        {
-          id: 1,
-          text: '小猫',
-          color: rdmRgbColor()
-        },
-        {
-          id: 2,
-          text: '二次',
-          color: rdmRgbColor()
-        },
-        {
-          id: 3,
-          text: '赛博克',
-          color: rdmRgbColor()
-        },
-        {
-          id: 4,
-          text: '简笔画',
-          color: rdmRgbColor()
-        },
-        {
-          id: 5,
-          text: '彩色',
-          color: rdmRgbColor()
-        },
-        {
-          id: 6,
-          text: '二次元',
-          color: rdmRgbColor()
-        },
-        {
-          id: 7,
-          text: '小猫',
-          color: rdmRgbColor()
-        },
-        {
-          id: 8,
-          text: '二次元',
-          color: rdmRgbColor()
-        },
-        {
-          id: 9,
-          text: '赛博克',
-          color: rdmRgbColor()
-        },
-        {
-          id: 14,
-          text: '简笔画',
-          color: rdmRgbColor()
-        },
-        {
-          id: 15,
-          text: '彩色',
-          color: rdmRgbColor()
-        },
-        {
-          id: 16,
-          text: '二次元',
-          color: rdmRgbColor()
-        }
-      ]
+      styleList: [],
+      tagsList: []
     }
   },
+  onLoad() {
+    this.getPaintingStyleRecommend()
+    this.getPromptSuggest()
+  },
   methods: {
+    selectTagesHandle(item) {
+      var comma = !this.value1 ? '' : ','
+      this.value1 = this.value1 + comma + item.serverData.chinesePrompt
+    },
+    async getPromptSuggest() {
+      const res = await AV.Cloud.run('getPromptSuggest')
+      this.tagsList = res.map((item) => ({ ...item, color: rdmRgbColor() }))
+    },
+    async getPaintingStyleRecommend() {
+      const res = await AV.Cloud.run('getPaintingStyleRecommend')
+      this.styleList = res
+    },
     clickStyleHandle(item) {
-      if (this.style === item) {
+      if (this.style === item.serverData.objectId) {
         this.style = null
       } else {
-        this.style = item
+        this.style = item.serverData.objectId
       }
     }
   }

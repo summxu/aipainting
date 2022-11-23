@@ -10,11 +10,11 @@
 
     <view class="container mb">
       <view class="xcc_label mb">剩余可画头像的点数 </view>
-      <view class="dian_num">20点 </view>
+      <view class="dian_num">{{userInfo.attributes.totalScore || 0}}点 </view>
 
       <view class="flex-row mb">
         <view class="button_bottom1">
-          <u-button @click="signinHandle" type="primary" shape="circle" text="签到"></u-button>
+          <u-button :disabled="userInfo.attributes.signIn" @click="signinHandle" type="primary" shape="circle" :text="userInfo.attributes.signIn ? '已签到' : '签到'"></u-button>
         </view>
         <view class="button_bottom">
           <u-button @click="show = true" class="button_bottom" type="success" shape="circle" text="充值"></u-button>
@@ -23,7 +23,7 @@
 
       <view class="xcc_label mb">观看广告获得点数 </view>
       <view class="flex-row">
-        <u-button type="primary" shape="circle" text="观 看 广 告 (0/99)"></u-button>
+        <u-button disabled type="primary" shape="circle" :text="`观 看 广 告 (${userInfo.attributes.remainingAds || 0}/99)`"></u-button>
       </view>
     </view>
 
@@ -32,7 +32,7 @@
         <u-cell icon="share" title="分享到群里" :isLink="true" arrow-direction="right">
           <template #label>
             <view class="flex-row option_label">
-              <u-button open-type="share" text="免费获取点数！"></u-button>
+              <u-button @click="nextStepShare = true" open-type="share" :text="`免费获取点数(${3 - userInfo.attributes.remainingShare}/3)！`"></u-button>
             </view>
           </template>
         </u-cell>
@@ -69,9 +69,12 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import AV from "../../utils/av-core-min";
 export default {
   data() {
     return {
+      nextStepShare: false,
       avatar:
         'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1730713693,2130926401&fm=26&gp=0.jpg',
       show: false,
@@ -109,11 +112,50 @@ export default {
       ]
     }
   },
+  computed: {
+    ...mapState(['userInfo'])
+  },
+  onShow() {
+    if (this.nextStepShare) {
+      this.userShareTask()
+      this.nextStepShare = false
+    }
+    this.$store.dispatch('flushUserInfo')
+  },
   methods: {
-    signinHandle() {
+    async userShareTask() {
       try {
+        await AV.Cloud.run('userShareTask')
+        uni.showToast({
+          title: '分享成功！',
+          icon: 'success',
+          mask: true
+        })
+        this.$store.dispatch('flushUserInfo')
       } catch (error) {
+        uni.showToast({
+          title: error.message.split(' ')[0],
+          icon: 'none',
+          mask: true
+        })
         console.log(error)
+      }
+    },
+    async signinHandle() {
+      try {
+        await AV.Cloud.run('userSignIn')
+        this.$store.dispatch('flushUserInfo')
+        uni.showToast({
+          title: '签到成功',
+          icon: 'success',
+          mask: true
+        })
+      } catch (error) {
+        uni.showToast({
+          title: error.message.split(' ')[0],
+          icon: 'none',
+          mask: true
+        })
       }
     }
   }

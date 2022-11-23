@@ -102,14 +102,10 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    async flushUserInfo ({
-      commit
-    }) {
+    async flushUserInfo ({ state, commit }) {
       try {
-        const {
-          data
-        } = await getUserInfo()
-        commit('saveUserInfo', data)
+        const { attributes } = await AV.Cloud.run('getUserScore')
+        commit('saveUserInfo', { ...state.userInfo, attributes })
       } catch (e) {
         //TODO handle the exception
       }
