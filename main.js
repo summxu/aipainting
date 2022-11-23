@@ -7,6 +7,18 @@ moment.locale('zh-cn'); // zh-cn
 
 Vue.use(uView);
 
+// 云函数初始化
+const AV = require('./utils/av-core-min');
+const adapters = require('./utils/leancloud-adapters-weapp.js');
+
+AV.setAdapters(adapters);
+
+AV.init({
+  appId: 'xZQbuhozkZrnUpmD4PyMGYTB-gzGzoHsz',
+  appKey: 't73yrEipGMODHhOnUujzzWwu',
+  serverURL: 'https://xzqbuhoz.lc-cn-n1-shared.com',
+})
+
 // 全局分享
 const $x = {};
 Vue.prototype.$x = $x;

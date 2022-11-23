@@ -14,7 +14,7 @@
 
       <view class="flex-row mb">
         <view class="button_bottom1">
-          <u-button type="primary" shape="circle" text="签到"></u-button>
+          <u-button @click="signinHandle" type="primary" shape="circle" text="签到"></u-button>
         </view>
         <view class="button_bottom">
           <u-button @click="show = true" class="button_bottom" type="success" shape="circle" text="充值"></u-button>
@@ -110,7 +110,12 @@ export default {
     }
   },
   methods: {
-    onClick(item) {},
+    signinHandle() {
+      try {
+      } catch (error) {
+        console.log(error)
+      }
+    }
   }
 }
 </script>

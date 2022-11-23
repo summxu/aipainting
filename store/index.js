@@ -11,7 +11,7 @@ import {
 import Vue from 'vue'
 import Vuex from 'vuex'
 import toast from 'uview-ui/libs/config/props/toast'
-
+import AV from "../utils/av-core-min";
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
@@ -24,18 +24,18 @@ const store = new Vuex.Store({
     token: null,
   },
   mutations: {
-    SET_SHARE_CODE(state, payload) {
+    SET_SHARE_CODE (state, payload) {
       state.shareCode = payload
     },
-    saveUserInfo(state, payload) {
+    saveUserInfo (state, payload) {
       state.userInfo = payload
       uni.setStorageSync('userInfo', payload)
     },
-    saveToken(state, payload) {
+    saveToken (state, payload) {
       state.token = payload
       uni.setStorageSync('token', payload)
     },
-    cleanUserInfo(state, payload) {
+    cleanUserInfo (state, payload) {
       state.userInfo = null
       state.token = null
       clearInterval(state.notifyTimer)
@@ -43,7 +43,7 @@ const store = new Vuex.Store({
       uni.removeStorageSync('token')
     },
     // 获取头部高度
-    getHeaderHeight(state) {
+    getHeaderHeight (state) {
       uni.getSystemInfo({
         success: (e) => {
           // this.compareVersion(e.SDKVersion, '2.5.0')
@@ -94,16 +94,15 @@ const store = new Vuex.Store({
     }
   },
   getters: {
-    getUserInfo(state) {
+    getUserInfo (state) {
       return state.userInfo
     },
-    getToken(state) {
+    getToken (state) {
       return state.token
     }
   },
   actions: {
-    
-    async flushUserInfo({
+    async flushUserInfo ({
       commit
     }) {
       try {
@@ -115,7 +114,7 @@ const store = new Vuex.Store({
         //TODO handle the exception
       }
     },
-    initUserInfo({
+    initUserInfo ({
       commit
     }) {
       return new Promise((resolve, reject) => {
@@ -123,14 +122,13 @@ const store = new Vuex.Store({
         commit('saveUserInfo', userInfo)
         const token = uni.getStorageSync('token')
         commit('saveToken', token)
-
         resolve({
           userInfo,
           token
         })
       })
     },
-    logoutAction({
+    logoutAction ({
       commit
     }) {
       commit('cleanUserInfo')
@@ -138,47 +136,15 @@ const store = new Vuex.Store({
         url: '/pages/login/login'
       })
     },
-    loginAction({
-      state,
-      commit
-    }, payload) {
-      return new Promise(async (resolve, reject) => {
-        try {
-          const {
-            data,
-            token,
-            code
-          } = await login({
-            code: payload,
-            shareCode: state.shareCode || null
-          })
-          // console.log(token)
-          commit('saveUserInfo', {
-            ...state.userInfo,
-            ...data
-          })
-          commit('saveToken', token)
-          if (code === 10002) {
-            // 能登陆但未注册
-            uni.redirectTo({
-              url: '/pages/login/login2',
-              success: res => {},
-              fail: () => {},
-              complete: () => {}
-            });
-            return
-          }
-          switchTab({
-            url: '/pages/index/index'
-          })
-          resolve({
-            data,
-            token
-          })
-        } catch (e) {
-          reject(e)
+    async loginAction ({ state, commit }, payload) {
+      if (AV.User.current()) {
+        const currentUser = AV.User.current();
+        if (await currentUser.isAuthenticated()) {
+          commit('saveUserInfo', currentUser)
         }
-      })
+      }
+      const currentUser = await AV.User.loginWithWeapp({ preferUnionId: true });
+      commit('saveUserInfo', currentUser)
     }
   }
 })
