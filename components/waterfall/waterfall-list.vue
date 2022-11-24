@@ -179,7 +179,6 @@
 				}
 				
 				if(!this.$props.list || this.$props.list.length < 1){
-					console.log('河浪瀑布流插件提示：当前数据为空，不会触发列表渲染');
 					return;
 				}
 				

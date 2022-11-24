@@ -34,9 +34,7 @@
 
 <script>
   import helangWaterfallList from "@/components/waterfall/waterfall-list"
-
-  // 列表接口模拟数据
-  import mockData from '../index/waterfall-list.js'
+  import AV from '../../utils/av-core-min.js'
 
   export default {
     components: {
@@ -49,9 +47,9 @@
           // 是否可以加载
           load: true,
           // 每页的请求条件
-          rows: 10,
+          rows: 20,
           // 页码
-          page: 1,
+          page: 0,
           // 数据列表
           dataList: []
         },
@@ -73,18 +71,15 @@
     },
     // 下拉刷新
     onPullDownRefresh() {
-      // 正常情况下接口返回应该很会很快。故意延迟调用，让用户有在刷新的体验感
-      setTimeout(() => {
-        this.ajax.page = 1;
-        this.ajax.load = true;
-        this.getList();
-      }, 800);
+      this.ajax.page = 0;
+      this.ajax.load = true;
+      this.getList();
     },
     methods: {
       // 瀑布流组件点击事件
       onClick(data, index, tag) {
         uni.navigateTo({
-          url: `/pages/index/detail?id=${data.id}&type=2`,
+          url: `/pages/index/detail?data=${JSON.stringify(data)}&type=2`,
         });
       },
       // 瀑布流组件渲染完成
@@ -94,42 +89,41 @@
 
         // 恢复 getList 方法的调用
         this.ajax.load = true;
-        this.ajax.page++;
+        this.ajax.page += this.ajax.rows;
 
         // 设置组件状态为 等待加载
         this.waterfall.status = 'await';
-
-        /**
-         * 如果你是一个追求完美的开发者，可以通过判断当前数据的长度和请求的数据长度来优化前端请求，减少不必要请求
-         * 不需要则删除
-         * */
-        /**
-        if(this.ajax.dataCount >= this.ajax.rows){
-        	this.ajax.load = true;
-        	this.ajax.page++;
+        
+        // 如果数量小于20个，继续请求，解决数量过少不触发底部的问题
+        if(this.ajax.dataList.length < 20) {
+          this.getList()
         }
-        */
+
       },
       // 获取数据
-      getList() {
+      async getList() {
         if (!this.ajax.load) {
           return;
         }
         this.ajax.load = false;
 
-        // 设置状态为加载中
-        this.waterfall.status = 'loading';
+        try {
+          // 设置状态为加载中
+          this.waterfall.status = 'loading';
 
-        // 请求数据， mockData.getList 示例一个 ajax 请求
-        mockData.getList({
-          pageNum: this.ajax.page,
-          pageSize: this.ajax.rows
-        }).then(res => {
-          // 获取到的数据，请注意数据结构
-          console.log(res);
+          let res = await AV.Cloud.run('getPaintingSample', {
+            skip: this.ajax.page,
+            limit: this.ajax.rows
+          })
+
+          res = res.map(item => ({
+            ...item.serverData,
+            id: item.serverData.objectId,
+            title: item.serverData.chinesePrompt,
+          }))
 
           // 第一页数据执行以下代码
-          if (this.ajax.page == 1) {
+          if (this.ajax.page == 0) {
             // 关闭下拉
             uni.stopPullDownRefresh();
 
@@ -149,12 +143,8 @@
           // 设置组件为 加载成功 状态，此时瀑布流组件开始计算当前数据的布局
           this.waterfall.status = 'success';
 
-          /**
-           * 下方的代码为扩展其他功能的示例代码 可做参考，不需要可删除
-           * */
-
           // 缓存当前数据给其他需要该数据的功能使用
-          if (this.ajax.page == 1) {
+          if (this.ajax.page == 0) {
             this.ajax.dataList = res;
           } else {
             this.ajax.dataList = [...this.ajax.dataList, ...res];
@@ -162,8 +152,10 @@
           // 记录本次数据长度，意义请看 done 事件的回调
           this.ajax.dataCount = res.length || 0;
 
-          // 。。。下面不需要写代码了，等待组件渲染完成
-        })
+        } catch (e) {
+          console.log(e)
+        }
+
       },
       // 导航状态切换演示监听
       onStatusChange() {
@@ -172,7 +164,7 @@
           success: (res) => {
             switch (res.tapIndex) {
               case 0:
-                this.ajax.page = 1;
+                this.ajax.page = 0;
                 this.ajax.load = true;
                 this.getList();
                 break;
