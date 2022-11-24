@@ -93,9 +93,9 @@
 
         // 设置组件状态为 等待加载
         this.waterfall.status = 'await';
-        
+
         // 如果数量小于20个，继续请求，解决数量过少不触发底部的问题
-        if(this.ajax.dataList.length < 20) {
+        if (this.ajax.dataList.length < 20) {
           this.getList()
         }
 
@@ -153,6 +153,11 @@
           this.ajax.dataCount = res.length || 0;
 
         } catch (e) {
+          // 用户可能未登录
+          setTimeout(() => {
+            this.ajax.load = true;
+            this.getList()
+          }, 2000)
           console.log(e)
         }
 
