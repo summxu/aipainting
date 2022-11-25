@@ -12,7 +12,7 @@ export function BaiDuTrans(q) {
   const url = 'https://fanyi-api.baidu.com/api/trans/vip/translate'
   const secret = 'gs85GynUt8LwAabexCw1'
   const appid = '20221121001462790'
-  
+
   const params = {
     q,
     from: 'auto',
@@ -26,5 +26,8 @@ export function BaiDuTrans(q) {
     url,
     method: 'POST',
     data: params,
+    header:{
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
   })
 }

@@ -101,19 +101,17 @@
           });
           return
         }
-        
+
         this.loading = true
         try {
           const styleVlaue = this.styleList.find(item => item.serverData.objectId === this.style)
 
           const transRes = await BaiDuTrans(this.value1)
-          console.log(transRes)
-
-          return
+          const translatePrompt = transRes[1].data.trans_result[0].dst
 
           const res = await AV.Cloud.run('createPaintingOrder', {
             chinesePrompt: this.value1,
-            translatePrompt: transRes,
+            translatePrompt: translatePrompt,
             promptStyleId: this.style || undefined,
             promptStyleValue: styleVlaue ? styleVlaue.serverData.title : undefined
           })
