@@ -7,6 +7,8 @@ export default {
     if (!userInfo) {
       store.dispatch('loginAction')
     }
+    // 获取分享信息
+    store.dispatch('getSharePlan')
     // 获取系统信息
     store.commit('getHeaderHeight')
   },

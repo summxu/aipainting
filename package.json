@@ -21,6 +21,7 @@
     "sass-resources-loader": "^2.2.5"
   },
   "dependencies": {
+    "js-md5": "^0.7.3",
     "moment": "^2.29.4",
     "uview-ui": "^2.0.31"
   }

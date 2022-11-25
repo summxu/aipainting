@@ -59,7 +59,7 @@
     </view>
 
     <view class="mt flex-row pd">
-      <u-button @click="gHandle" type="primary" shape="circle" text="生成（消耗3点）"></u-button>
+      <u-button :loading="loading" @click="gHandle" type="primary" shape="circle" text="生成（消耗3点）"></u-button>
     </view>
 
   </view>
@@ -69,10 +69,14 @@
   import {
     rdmRgbColor
   } from '@/utils'
+  import {
+    BaiDuTrans
+  } from '../../api/index.js'
   import AV from '../../utils/av-core-min'
   export default {
     data() {
       return {
+        loading: false,
         value1: '',
         style: null,
         styleList: [],
@@ -90,17 +94,28 @@
     },
     methods: {
       async gHandle() {
-        if(!this.value1) {
+        if (!this.value1) {
           uni.showToast({
             title: '输入一些关键词再试一下',
             icon: 'none'
           });
           return
         }
+        
+        this.loading = true
         try {
+          const styleVlaue = this.styleList.find(item => item.serverData.objectId === this.style)
+
+          const transRes = await BaiDuTrans(this.value1)
+          console.log(transRes)
+
+          return
+
           const res = await AV.Cloud.run('createPaintingOrder', {
             chinesePrompt: this.value1,
-            promptStyleId: this.style
+            translatePrompt: transRes,
+            promptStyleId: this.style || undefined,
+            promptStyleValue: styleVlaue ? styleVlaue.serverData.title : undefined
           })
           uni.showToast({
             title: '提交AI成功，请耐心等待生成结果！',
@@ -114,6 +129,7 @@
         } catch (e) {
           console.log(e)
         }
+        this.loading = false
       },
       selectTagesHandle(item) {
         var comma = !this.value1 ? '' : ','

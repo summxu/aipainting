@@ -3,7 +3,12 @@
     <view class="pd">
       <image v-if="data.status == 1" v-for="(item,index) in data.images" :key="index" :src="item.serverData.url"
         class="main_image" mode=""></image>
-      <image v-if="data.status == 0" src="../../static/waterfall/0.jpg" class="main_image" mode=""></image>
+      <view v-if="data.status == 0" class="dIng-box">
+        <image src="../../static/waterfall/0.jpg" class="main_image" mode=""></image>
+        <view class="dIng-text">
+          画头酱作画中
+        </view>
+      </view>
     </view>
 
     <view v-if="!isExample" class="container mb">
@@ -17,7 +22,7 @@
     </view>
     <view class="container">
       <view class="xcc_label">风格</view>
-      <view class="desc">赛博朋克</view>
+      <view class="desc">{{data.promptStyle.serverData.title}}</view>
     </view>
     <view v-if="!isExample" class="container">
       <view class="xcc_label">迭代次数</view>
@@ -101,6 +106,19 @@
 </script>
 
 <style>
+  .dIng-box {
+    position: relative;
+  }
+
+  .dIng-text {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 22px;
+    color: #666;
+  }
+
   .main_image {
     border-radius: 8px;
     width: 100%;

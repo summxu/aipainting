@@ -22,20 +22,24 @@ const store = new Vuex.Store({
     systemInfo: {},
     userInfo: null,
     token: null,
+    shareObj: {}
   },
   mutations: {
-    SET_SHARE_CODE (state, payload) {
+    SET_SHARE_CODE(state, payload) {
       state.shareCode = payload
     },
-    saveUserInfo (state, payload) {
+    SET_SHARE_OBJ(state, payload) {
+      state.shareObj = payload
+    },
+    saveUserInfo(state, payload) {
       state.userInfo = payload
       uni.setStorageSync('userInfo', payload)
     },
-    saveToken (state, payload) {
+    saveToken(state, payload) {
       state.token = payload
       uni.setStorageSync('token', payload)
     },
-    cleanUserInfo (state, payload) {
+    cleanUserInfo(state, payload) {
       state.userInfo = null
       state.token = null
       clearInterval(state.notifyTimer)
@@ -43,7 +47,7 @@ const store = new Vuex.Store({
       uni.removeStorageSync('token')
     },
     // 获取头部高度
-    getHeaderHeight (state) {
+    getHeaderHeight(state) {
       uni.getSystemInfo({
         success: (e) => {
           // this.compareVersion(e.SDKVersion, '2.5.0')
@@ -94,23 +98,46 @@ const store = new Vuex.Store({
     }
   },
   getters: {
-    getUserInfo (state) {
+    getUserInfo(state) {
       return state.userInfo
     },
-    getToken (state) {
+    getShareObj(state) {
+      return state.shareObj
+    },
+    getToken(state) {
       return state.token
     }
   },
   actions: {
-    async flushUserInfo ({ state, commit }) {
+    async getSharePlan({
+      commit
+    }) {
       try {
-        const { attributes } = await AV.Cloud.run('getUserScore')
-        commit('saveUserInfo', { ...state.userInfo, attributes })
+        let {
+          serverData
+        } = await AV.Cloud.run('getSharePlan')
+        commit('SET_SHARE_OBJ', serverData)
       } catch (e) {
         //TODO handle the exception
       }
     },
-    initUserInfo ({
+    async flushUserInfo({
+      state,
+      commit
+    }) {
+      try {
+        const {
+          attributes
+        } = await AV.Cloud.run('getUserScore')
+        commit('saveUserInfo', {
+          ...state.userInfo,
+          attributes
+        })
+      } catch (e) {
+        //TODO handle the exception
+      }
+    },
+    initUserInfo({
       commit
     }) {
       return new Promise((resolve, reject) => {
@@ -124,7 +151,7 @@ const store = new Vuex.Store({
         })
       })
     },
-    logoutAction ({
+    logoutAction({
       commit
     }) {
       commit('cleanUserInfo')
@@ -132,14 +159,19 @@ const store = new Vuex.Store({
         url: '/pages/login/login'
       })
     },
-    async loginAction ({ state, commit }, payload) {
+    async loginAction({
+      state,
+      commit
+    }, payload) {
       if (AV.User.current()) {
         const currentUser = AV.User.current();
         if (await currentUser.isAuthenticated()) {
           commit('saveUserInfo', currentUser)
         }
       }
-      const currentUser = await AV.User.loginWithWeapp({ preferUnionId: true });
+      const currentUser = await AV.User.loginWithWeapp({
+        preferUnionId: true
+      });
       commit('saveUserInfo', currentUser)
     }
   }

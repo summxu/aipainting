@@ -1,9 +1,14 @@
 <template>
   <view class="waterfall-item-container">
     <view class="waterfall-item" @tap="onTap">
-      <image v-if="params.status && params.images" v-for="(item,key) in params.images" :key="key" :src="item.serverData.url"
-        mode="widthFix" @load="emitHeight" @error="emitHeight"></image>
-      <image v-if="!params.status" :src="'../../static/waterfall/0.jpg'" mode="widthFix" @load="emitHeight" @error="emitHeight">
+      <image v-if="params.status && params.images" v-for="(item,key) in params.images" :key="key"
+        :src="item.serverData.url" mode="widthFix" @load="emitHeight" @error="emitHeight"></image>
+      <view v-if="!params.status" class="dIng-box">
+        <image :src="'../../static/waterfall/0.jpg'" mode="widthFix" @load="emitHeight" @error="emitHeight">
+          <view class="dIng-text">
+            画头酱<br>作画中
+          </view>
+      </view>
       </image>
       <view class="content">
         <view class="u-line-2">{{params.title}}</view>
@@ -56,6 +61,19 @@
 </script>
 
 <style lang="scss" scoped>
+  .dIng-box {
+    position: relative;
+  }
+
+  .dIng-text {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 18px;
+    color: #666;
+  }
+
   .waterfall-item {
     padding: 16rpx;
     background-color: #fff;

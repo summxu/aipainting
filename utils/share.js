@@ -8,26 +8,31 @@ import AV from "../utils/av-core-min";
 import store from "../store/index";
 
 module.exports = {
-  onShow () {
+  onShow() {
     let pages = getCurrentPages();
+    const {
+      image,
+      title
+    } = store.getters.getShareObj
+    if (!image) return
     if (pages.length >= 1) {
       this.$x.pageRouter = (pages[pages.length - 1]).route
       if (this.$x.pageRouter) {
         this.$x.mpShare = {
-          title: '画头酱-智能AI绘画平台！', // 分享标题
+          title, // 分享标题
           path: '/pages/index/index', // 默认为当前页面路径
-          imageUrl: '/static/share.jpg' // 默认为当前页面的截图
+          imageUrl: image.serverData.url // 默认为当前页面的截图
         }
       }
       return;
     }
   },
   // 分享到好友
-  async onShareAppMessage (el) {
+  async onShareAppMessage(el) {
     return this.$x.mpShare
   },
   // 分享到朋友圈
-  onShareTimeline () {
+  onShareTimeline() {
     return this.$x.mpShare
   }
 }
