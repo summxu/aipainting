@@ -46,7 +46,7 @@
 
 <script>
   import {
-    navigateTo
+    navigateTo, switchTab
   } from '../../utils/navigate'
   export default {
     data() {
@@ -66,7 +66,7 @@
     },
     methods: {
       toDraw() {
-        uni.redirectTo({
+        uni.switchTab({
           url: '/pages/draw/draw?keyword=' + this.data.chinesePrompt,
         });
       },

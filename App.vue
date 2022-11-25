@@ -26,7 +26,7 @@ export default {
 
 /*每个页面公共css */
 page {
-  background-color: #f6f6f6;
+  background-color: #E8E8E8;
 }
 
 html {
