@@ -1,7 +1,6 @@
 <template>
   <view>
-    <helang-waterfall-list :status="waterfall.status" :list="waterfall.list" :reset="waterfall.reset" @click="onClick"
-      @done="onDone">
+    <helang-waterfall-list :status="waterfall.status" :list="waterfall.list" :reset="waterfall.reset" @click="onClick" @done="onDone">
       <template>
         <view v-if="waterfall.status == 'await'">
           <view class="load-txt">上拉加载更多</view>
@@ -33,200 +32,209 @@
 </template>
 
 <script>
-  import helangWaterfallList from "@/components/waterfall/waterfall-list"
-  import AV from '../../utils/av-core-min.js'
+import helangWaterfallList from '@/components/waterfall/waterfall-list'
+import AV from '../../utils/av-core-min.js'
+import { mapState } from 'vuex'
+export default {
+  components: {
+    'helang-waterfall-list': helangWaterfallList
+  },
 
-  export default {
-    components: {
-      "helang-waterfall-list": helangWaterfallList
+  data() {
+    return {
+      // 异步请求相关
+      ajax: {
+        // 是否可以加载
+        load: true,
+        // 每页的请求条件
+        rows: 20,
+        // 页码
+        page: 0,
+        // 数据列表
+        dataList: []
+      },
+      // 瀑布流组件相关
+      waterfall: {
+        status: '',
+        reset: false,
+        list: []
+      }
+    }
+  },
+  computed: {
+    ...mapState(['indexFlush'])
+  },
+  onReady() {
+    this.getList()
+  },
+  onShow() {
+    if (this.indexFlush) {
+      this.$store.commit('SET_INDEX_FLUSH', false)
+      uni.startPullDownRefresh({
+        success: (result) => {},
+        fail: (error) => {}
+      })
+    }
+  },
+  // 触底触发
+  onReachBottom() {
+    this.getList()
+  },
+  // 下拉刷新
+  onPullDownRefresh() {
+    this.ajax.page = 0
+    this.ajax.load = true
+    this.getList()
+  },
+  methods: {
+    // 瀑布流组件点击事件
+    onClick(data, index, tag) {
+      uni.navigateTo({
+        url: `/pages/index/detail?data=${JSON.stringify(data)}&type=1`
+      })
     },
-    data() {
-      return {
-        // 异步请求相关
-        ajax: {
-          // 是否可以加载
-          load: true,
-          // 每页的请求条件
-          rows: 20,
-          // 页码
-          page: 0,
-          // 数据列表
-          dataList: []
-        },
-        // 瀑布流组件相关
-        waterfall: {
-          status: "",
-          reset: false,
-          list: []
-        }
+    // 瀑布流组件渲染完成
+    onDone() {
+      // 设置组件为 非重置，这行代码保留不删即可
+      this.waterfall.reset = false
 
+      // 恢复 getList 方法的调用
+      this.ajax.load = true
+      this.ajax.page += this.ajax.rows
+
+      // 设置组件状态为 等待加载
+      this.waterfall.status = 'await'
+
+      // 如果数量小于20个，继续请求，解决数量过少不触发底部的问题
+      if (this.ajax.dataList.length < 20) {
+        this.getList()
       }
     },
-    onReady() {
-      this.getList();
-    },
-    // 触底触发
-    onReachBottom() {
-      this.getList();
-    },
-    // 下拉刷新
-    onPullDownRefresh() {
-      this.ajax.page = 0;
-      this.ajax.load = true;
-      this.getList();
-    },
-    methods: {
-      // 瀑布流组件点击事件
-      onClick(data, index, tag) {
-        uni.navigateTo({
-          url: `/pages/index/detail?data=${JSON.stringify(data)}&type=1`,
-        });
-      },
-      // 瀑布流组件渲染完成
-      onDone() {
-        // 设置组件为 非重置，这行代码保留不删即可
-        this.waterfall.reset = false;
+    // 获取数据
+    async getList() {
+      if (!this.ajax.load) {
+        return
+      }
+      this.ajax.load = false
 
-        // 恢复 getList 方法的调用
-        this.ajax.load = true;
-        this.ajax.page += this.ajax.rows;
+      try {
+        // 设置状态为加载中
+        this.waterfall.status = 'loading'
 
-        // 设置组件状态为 等待加载
-        this.waterfall.status = 'await';
+        let res = await AV.Cloud.run('getUserPainting', {
+          skip: this.ajax.page,
+          limit: this.ajax.rows
+        })
 
-        // 如果数量小于20个，继续请求，解决数量过少不触发底部的问题
-        if (this.ajax.dataList.length < 20) {
+        res = res.map((item) => ({
+          ...item.serverData,
+          id: item.serverData.objectId,
+          title: item.serverData.chinesePrompt
+        }))
+
+        // 第一页数据执行以下代码
+        if (this.ajax.page == 0) {
+          // 关闭下拉
+          uni.stopPullDownRefresh()
+
+          // 设置组件状态为 重置，可供下拉刷新这类需要重置列表功能时使用
+          this.waterfall.reset = true
+        }
+
+        // 数据无效时处理
+        if (!res || res.length < 1) {
+          // 设置组件为 加载结束 状态
+          this.waterfall.status = 'finish'
+          return
+        }
+
+        // 将数据赋值给瀑布流 list 属性
+        this.waterfall.list = res
+        // 设置组件为 加载成功 状态，此时瀑布流组件开始计算当前数据的布局
+        this.waterfall.status = 'success'
+
+        // 缓存当前数据给其他需要该数据的功能使用
+        if (this.ajax.page == 0) {
+          this.ajax.dataList = res
+        } else {
+          this.ajax.dataList = [...this.ajax.dataList, ...res]
+        }
+        // 记录本次数据长度，意义请看 done 事件的回调
+        this.ajax.dataCount = res.length || 0
+      } catch (e) {
+        // 用户可能未登录
+        setTimeout(() => {
+          this.ajax.load = true
           this.getList()
+        }, 2000)
+        console.log(e)
+      }
+    },
+    // 导航状态切换演示监听
+    onStatusChange() {
+      uni.showActionSheet({
+        itemList: ['常规', '加载异常', '加载错误'],
+        success: (res) => {
+          switch (res.tapIndex) {
+            case 0:
+              this.ajax.page = 0
+              this.ajax.load = true
+              this.getList()
+              break
+            case 1:
+              // alert(111)
+              this.waterfall.status = 'fail'
+              break
+            case 2:
+              this.waterfall.status = 'empty'
+              break
+            default:
+          }
         }
-
-      },
-      // 获取数据
-      async getList() {
-        if (!this.ajax.load) {
-          return;
-        }
-        this.ajax.load = false;
-
-        try {
-          // 设置状态为加载中
-          this.waterfall.status = 'loading';
-
-          let res = await AV.Cloud.run('getUserPainting', {
-            skip: this.ajax.page,
-            limit: this.ajax.rows
-          })
-
-          res = res.map(item => ({
-            ...item.serverData,
-            id: item.serverData.objectId,
-            title: item.serverData.chinesePrompt,
-          }))
-
-          // 第一页数据执行以下代码
-          if (this.ajax.page == 0) {
-            // 关闭下拉
-            uni.stopPullDownRefresh();
-
-            // 设置组件状态为 重置，可供下拉刷新这类需要重置列表功能时使用
-            this.waterfall.reset = true;
-          }
-
-          // 数据无效时处理
-          if (!res || res.length < 1) {
-            // 设置组件为 加载结束 状态
-            this.waterfall.status = 'finish';
-            return;
-          }
-
-          // 将数据赋值给瀑布流 list 属性
-          this.waterfall.list = res;
-          // 设置组件为 加载成功 状态，此时瀑布流组件开始计算当前数据的布局
-          this.waterfall.status = 'success';
-
-          // 缓存当前数据给其他需要该数据的功能使用
-          if (this.ajax.page == 0) {
-            this.ajax.dataList = res;
-          } else {
-            this.ajax.dataList = [...this.ajax.dataList, ...res];
-          }
-          // 记录本次数据长度，意义请看 done 事件的回调
-          this.ajax.dataCount = res.length || 0;
-
-        } catch (e) {
-          // 用户可能未登录
-          setTimeout(() => {
-            this.ajax.load = true;
-            this.getList()
-          }, 2000)
-          console.log(e)
-        }
-
-      },
-      // 导航状态切换演示监听
-      onStatusChange() {
-        uni.showActionSheet({
-          itemList: ['常规', '加载异常', '加载错误'],
-          success: (res) => {
-            switch (res.tapIndex) {
-              case 0:
-                this.ajax.page = 0;
-                this.ajax.load = true;
-                this.getList();
-                break;
-              case 1:
-                // alert(111)
-                this.waterfall.status = 'fail';
-                break;
-              case 2:
-                this.waterfall.status = 'empty';
-                break;
-              default:
-            }
-          }
-        });
-      },
+      })
     }
   }
+}
 </script>
 
 <style lang="scss">
-  page {
-    background-color: #E8E8E8;
-  }
+page {
+  background-color: #e8e8e8;
+}
 
-  .load-txt {
-    padding: 0 0 20rpx 0;
-    text-align: center;
-    color: #999;
-    font-size: 24rpx;
-  }
+.load-txt {
+  padding: 0 0 20rpx 0;
+  text-align: center;
+  color: #999;
+  font-size: 24rpx;
+}
 
-  .load-icon {
-    width: 300rpx;
-    height: 300rpx;
-    margin: 0 auto 20rpx auto;
-    display: block;
-  }
+.load-icon {
+  width: 300rpx;
+  height: 300rpx;
+  margin: 0 auto 20rpx auto;
+  display: block;
+}
 
-  .status-change {
-    position: fixed;
-    right: 10rpx;
-    top: 60%;
-    width: 80rpx;
-    height: 80rpx;
-    z-index: 100;
-    font-size: 24rpx;
-    border-radius: 50%;
-    background-color: #0089ff;
-    color: #fff;
-    line-height: 1;
-    opacity: .33;
+.status-change {
+  position: fixed;
+  right: 10rpx;
+  top: 60%;
+  width: 80rpx;
+  height: 80rpx;
+  z-index: 100;
+  font-size: 24rpx;
+  border-radius: 50%;
+  background-color: #0089ff;
+  color: #fff;
+  line-height: 1;
+  opacity: 0.33;
 
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: center;
-    align-items: center;
-    align-content: center;
-  }
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
 </style>
