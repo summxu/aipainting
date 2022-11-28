@@ -27,27 +27,27 @@ const store = new Vuex.Store({
     drawKeywords: ''
   },
   mutations: {
-    SET_INDEX_FLUSH (state, payload) {
+    SET_INDEX_FLUSH(state, payload) {
       state.indexFlush = payload
     },
-    SET_DRAW_KEYWORDS (state, payload) {
+    SET_DRAW_KEYWORDS(state, payload) {
       state.drawKeywords = payload
     },
-    SET_SHARE_CODE (state, payload) {
+    SET_SHARE_CODE(state, payload) {
       state.shareCode = payload
     },
-    SET_SHARE_OBJ (state, payload) {
+    SET_SHARE_OBJ(state, payload) {
       state.shareObj = payload
     },
-    saveUserInfo (state, payload) {
+    saveUserInfo(state, payload) {
       state.userInfo = payload
       uni.setStorageSync('userInfo', payload)
     },
-    saveToken (state, payload) {
+    saveToken(state, payload) {
       state.token = payload
       uni.setStorageSync('token', payload)
     },
-    cleanUserInfo (state, payload) {
+    cleanUserInfo(state, payload) {
       state.userInfo = null
       state.token = null
       clearInterval(state.notifyTimer)
@@ -55,7 +55,7 @@ const store = new Vuex.Store({
       uni.removeStorageSync('token')
     },
     // 获取头部高度
-    getHeaderHeight (state) {
+    getHeaderHeight(state) {
       uni.getSystemInfo({
         success: (e) => {
           // this.compareVersion(e.SDKVersion, '2.5.0')
@@ -106,18 +106,18 @@ const store = new Vuex.Store({
     }
   },
   getters: {
-    getUserInfo (state) {
+    getUserInfo(state) {
       return state.userInfo
     },
-    getShareObj (state) {
+    getShareObj(state) {
       return state.shareObj
     },
-    getToken (state) {
+    getToken(state) {
       return state.token
     }
   },
   actions: {
-    async getSharePlan ({
+    async getSharePlan({
       commit
     }) {
       try {
@@ -129,7 +129,7 @@ const store = new Vuex.Store({
         //TODO handle the exception
       }
     },
-    async flushUserInfo ({
+    async flushUserInfo({
       state,
       commit
     }) {
@@ -145,7 +145,7 @@ const store = new Vuex.Store({
         //TODO handle the exception
       }
     },
-    initUserInfo ({
+    initUserInfo({
       commit
     }) {
       return new Promise((resolve, reject) => {
@@ -159,7 +159,7 @@ const store = new Vuex.Store({
         })
       })
     },
-    logoutAction ({
+    logoutAction({
       commit
     }) {
       commit('cleanUserInfo')
@@ -167,7 +167,7 @@ const store = new Vuex.Store({
         url: '/pages/login/login'
       })
     },
-    async loginAction ({
+    async loginAction({
       state,
       commit
     }, payload) {
@@ -177,10 +177,12 @@ const store = new Vuex.Store({
           commit('saveUserInfo', currentUser)
         }
       }
-      const currentUser = await AV.User.loginWithWeapp({
+      const {
+        attributes
+      } = await AV.User.loginWithWeapp({
         preferUnionId: true
       });
-      commit('saveUserInfo', currentUser)
+      commit('saveUserInfo', attributes)
     }
   }
 })

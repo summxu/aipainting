@@ -130,7 +130,12 @@ export default {
         // 刷新让主页刷新
         this.$store.commit('SET_INDEX_FLUSH', true)
         uni.switchTab({ url: '/pages/index/index' })
-      } catch (e) {
+      } catch (error) {
+        uni.showToast({
+          title: error.message.split(' ')[0],
+          icon: 'none',
+          mask: true
+        })
         console.log(e)
       }
       // this.loading = false

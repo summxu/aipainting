@@ -54,19 +54,20 @@
     </view>
 
     <!-- 购买弹出 -->
+    <!-- 购买积分的类型 scoreType1 1.89元20积分 scoreType2 4.9元60积分 scoreType2 10元120积分 -->
     <u-popup :show="show" closeOnClickOverlay @close="show = false" :round="10" mode="bottom">
       <view class="buy-items flex-row justify-around">
-        <view class="buy-item">
+        <view @click="payHandle('scoreType1')" class="buy-item">
           <view class="item-title">20 点</view>
-          <view class="item-price"><text style="color:red">￥</text>1.00</view>
+          <view class="item-price"><text style="color:red">￥</text>1.89</view>
         </view>
-        <view class="buy-item">
-          <view class="item-title">100 点</view>
-          <view class="item-price"><text style="color:red">￥</text>8.00</view>
+        <view @click="payHandle('scoreType2')" class="buy-item">
+          <view class="item-title">60 点</view>
+          <view class="item-price"><text style="color:red">￥</text>4.90</view>
         </view>
-        <view class="buy-item">
-          <view class="item-title">2000 点</view>
-          <view class="item-price"><text style="color:red">￥</text>100.00</view>
+        <view @click="payHandle('scoreType3')" class="buy-item">
+          <view class="item-title">120 点</view>
+          <view class="item-price"><text style="color:red">￥</text>10.00</view>
         </view>
       </view>
     </u-popup>
@@ -144,6 +145,40 @@
             mask: true
           })
           console.log(error)
+        }
+      },
+      async payHandle(scoreType) {
+        const openid = this.userInfo.authData.lc_weapp.openid
+        const appid = wx.getAccountInfoSync().miniProgram.appId;
+        try {
+          const {
+            prepayId
+          } = await AV.Cloud.run('wxPayScore', {
+            openId: openid,
+            scoreType
+          })
+          const dt = new Date()
+          // 使用字段appId、timeStamp、nonceStr、package
+          wx.requestPayment({
+            timeStamp: dt.getTime(),
+            nonceStr: '5K8264ILTKCH16CQ2502SI8ZNMTM67VS',
+            package: `prepay_id=${prepayId}`,
+            signType: 'RSA',
+            // paySign:
+          })
+          this.$store.dispatch('flushUserInfo')
+          this.show = false
+          uni.showToast({
+            title: '充值成功',
+            icon: 'success',
+            mask: true
+          })
+        } catch (error) {
+          uni.showToast({
+            title: error.message.split(' ')[0],
+            icon: 'none',
+            mask: true
+          })
         }
       },
       async signinHandle() {
