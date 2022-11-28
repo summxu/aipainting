@@ -148,30 +148,25 @@
         }
       },
       async payHandle(scoreType) {
+        console.log( this.userInfo)
         const openid = this.userInfo.authData.lc_weapp.openid
         const appid = wx.getAccountInfoSync().miniProgram.appId;
         try {
-          const {
-            prepayId
-          } = await AV.Cloud.run('wxPayScore', {
+          const res = await AV.Cloud.run('wxPayScore', {
             openId: openid,
             scoreType
           })
-          const dt = new Date()
-          // 使用字段appId、timeStamp、nonceStr、package
           wx.requestPayment({
-            timeStamp: dt.getTime(),
-            nonceStr: '5K8264ILTKCH16CQ2502SI8ZNMTM67VS',
-            package: `prepay_id=${prepayId}`,
-            signType: 'RSA',
-            // paySign:
-          })
-          this.$store.dispatch('flushUserInfo')
-          this.show = false
-          uni.showToast({
-            title: '充值成功',
-            icon: 'success',
-            mask: true
+            ...res,
+            success: () => {
+              this.$store.dispatch('flushUserInfo')
+              this.show = false
+              uni.showToast({
+                title: '充值成功',
+                icon: 'success',
+                mask: true
+              })
+            }
           })
         } catch (error) {
           uni.showToast({
