@@ -31,25 +31,28 @@
 
     <view class="options_box">
       <u-cell-group>
-        <u-cell icon="share" title="分享到群里" :isLink="true" arrow-direction="right">
-          <template #label>
-            <view class="flex-row option_label">
-              <u-button @click="nextStepShare = true" open-type="share"
-                :text="`免费获取点数(${3 - userInfo.attributes.remainingShare}/3)！`"></u-button>
-            </view>
-          </template>
-        </u-cell>
+        <u-button @click="nextStepShare = true" open-type="share">
+          <u-cell icon="share" title="分享到群里" :isLink="true" arrow-direction="right">
+            <template #label>
+              <view class="flex-row option_label">
+                {{`免费获取点数(${3 - userInfo.attributes.remainingShare}/3)！`}}
+              </view>
+            </template>
+          </u-cell>
+        </u-button>
         <u-cell @click="$toPage('/pages/webview/webview?type=1')" icon="question-circle-fill" title="使用帮助"
           :isLink="true" arrow-direction="right"></u-cell>
         <u-cell @click="$toPage('/pages/webview/webview?type=2')" icon="calendar-fill" title="服务协议" :isLink="true"
           arrow-direction="right"></u-cell>
-        <u-cell icon="server-fill" :isLink="true" arrow-direction="right">
-          <template #title>
-            <view class="flex-row option_label1">
-              <u-button style="font-size: 15px" open-type="contact" text="联系客服"></u-button>
-            </view>
-          </template>
-        </u-cell>
+        <u-button style="font-size: 15px" open-type="contact">
+          <u-cell icon="server-fill" :isLink="true" arrow-direction="right">
+            <template #title>
+              <view class="flex-row option_label1">
+                联系客服
+              </view>
+            </template>
+          </u-cell>
+        </u-button>
       </u-cell-group>
     </view>
 
@@ -226,6 +229,16 @@
 
   .options_box {
     background-color: #fff;
+
+    /deep/ .u-button {
+      text-align: left;
+      padding: 0 !important;
+      height: auto !important;
+
+      .u-cell {
+        width: 100%;
+      }
+    }
   }
 
   .dian_num {
@@ -233,29 +246,8 @@
     margin-bottom: 15px;
   }
 
-  .option_label .u-button,
-  .option_label1 .u-button {
-    margin: 0 !important;
-    color: $uni-color-error !important;
-    border: none !important;
-    padding: 0 !important;
-    line-height: 16px !important;
-    height: 16px !important;
-    font-size: 13px !important;
-    justify-content: flex-start !important;
-  }
-
-  .option_label .u-button--active::before,
-  .option_label1 .u-button--active::before {
-    background-color: transparent !important;
-  }
-
-  .option_label1 .u-button {
-    color: $u-main-color !important;
-  }
-
-  .option_label1 .u-button__text {
-    font-size: 15px !important;
+  .option_label {
+    color: $uni-color-error;
   }
 
   .buy-items {
