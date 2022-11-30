@@ -2,7 +2,7 @@
   <view class="detail page-bottom">
     <view class="pd">
       <image v-if="data.status == 1" v-for="(item,index) in data.images" :key="index" :src="item.serverData.url" class="main_image" mode=""></image>
-      <view v-if="data.status == 0" class="dIng-box">
+      <view v-if="data.status == 2 || data.status == 0" class="dIng-box">
         <image src="../../static/waterfall/0.jpg" class="main_image" mode=""></image>
         <view class="dIng-text">
           画头酱作画中

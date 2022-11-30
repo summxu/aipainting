@@ -1,9 +1,9 @@
 <template>
   <view class="waterfall-item-container">
     <view class="waterfall-item" @tap="onTap">
-      <image v-if="params.status && params.images" v-for="(item,key) in params.images" :key="key"
+      <image v-if="params.status == 1 && params.images" v-for="(item,key) in params.images" :key="key"
         :src="item.serverData.url" mode="widthFix" @load="emitHeight" @error="emitHeight"></image>
-      <view v-if="!params.status" class="dIng-box">
+      <view v-if="params.status == 2 || params.status == 0" class="dIng-box">
         <image :src="'../../static/waterfall/0.jpg'" mode="widthFix" @load="emitHeight" @error="emitHeight">
           <view class="dIng-text">
             画头酱<br>作画中

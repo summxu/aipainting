@@ -148,9 +148,7 @@
         }
       },
       async payHandle(scoreType) {
-        console.log( this.userInfo)
         const openid = this.userInfo.authData.lc_weapp.openid
-        const appid = wx.getAccountInfoSync().miniProgram.appId;
         try {
           const res = await AV.Cloud.run('wxPayScore', {
             openId: openid,
