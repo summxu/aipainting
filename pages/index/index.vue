@@ -162,11 +162,6 @@ export default {
         // 记录本次数据长度，意义请看 done 事件的回调
         this.ajax.dataCount = res.length || 0
       } catch (e) {
-        // 用户可能未登录
-        setTimeout(() => {
-          this.ajax.load = true
-          this.getList()
-        }, 2000)
         console.log(e)
       }
     },

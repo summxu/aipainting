@@ -2,11 +2,6 @@
 import store from './store/index.js'
 export default {
   onLaunch: async function () {
-    const { userInfo } = await store.dispatch('initUserInfo')
-    // 没有用户信息,的情况下请求登录
-    if (!userInfo) {
-      store.dispatch('loginAction')
-    }
     // 获取分享信息
     store.dispatch('getSharePlan')
     // 获取系统信息

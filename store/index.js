@@ -24,7 +24,7 @@ const store = new Vuex.Store({
     token: null,
     shareObj: {},
     indexFlush: false,
-    drawKeywords: ''
+    drawKeywords: {}
   },
   mutations: {
     SET_INDEX_FLUSH(state, payload) {

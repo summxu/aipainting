@@ -56,6 +56,10 @@
           </u-grid-item>
         </u-grid>
       </view>
+      <view class="alert-text">
+        注意：不要局限于以上风格，可以输入更多关键词，生成更多风格的图
+      </view>
+
     </view>
 
     <view class="mt flex-row pd">
@@ -87,12 +91,22 @@
       }
     },
     computed: {
-      ...mapState(['drawKeywords'])
+      ...mapState(['drawKeywords', 'userInfo'])
     },
     onShow() {
-      if (this.drawKeywords) {
-        this.value1 = this.drawKeywords
-        this.$store.commit('SET_DRAW_KEYWORDS', '')
+      if (JSON.stringify(this.drawKeywords) != '{}') {
+        console.log(this.drawKeywords)
+        const {
+          chinesePrompt,
+          promptStyle
+        } = this.drawKeywords
+        this.value1 = chinesePrompt
+        if (promptStyle) {
+          this.style = promptStyle.serverData.objectId
+        } else {
+          this.style = null
+        }
+        this.$store.commit('SET_DRAW_KEYWORDS', {})
       }
     },
     onLoad({
@@ -101,10 +115,21 @@
       if (keyword) {
         this.value1 = keyword
       }
-      this.getPaintingStyleRecommend()
-      this.getPromptSuggest()
+      this.initHandle()
     },
     methods: {
+      async initHandle() {
+        try {
+          // 没有用户信息,的情况下请求登录
+          if (!this.userInfo) {
+            await this.$store.dispatch('loginAction')
+          }
+          this.getPaintingStyleRecommend()
+          this.getPromptSuggest()
+        } catch (e) {
+          //TODO handle the exception
+        }
+      },
       async gHandle() {
         if (!this.value1) {
           uni.showToast({
@@ -181,6 +206,12 @@
 <style lang="scss" scoped>
   /deep/.u-textarea__field {
     min-height: 70px;
+  }
+
+  .alert-text {
+    font-size: 13px;
+    color: $uni-color-subtitle;
+    padding: 10px 5px 0;
   }
 
   .keyword_label {

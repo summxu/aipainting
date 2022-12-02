@@ -3,19 +3,17 @@
     "^u-(.*)": "uview-ui/components/u-$1/u-$1.vue"
   },
   "lazyCodeLoading": "requiredComponents",
-  "pages": [
-    {
-      "path": "pages/index/index",
-      "style": {
-        "navigationBarTitleText": "画作",
-        "enablePullDownRefresh": true
-      }
-    },
-    {
+  "pages": [{
       "path": "pages/draw/draw",
       "style": {
         "navigationBarTitleText": "画头像",
         "enablePullDownRefresh": false
+      }
+    }, {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "画作",
+        "enablePullDownRefresh": true
       }
     },
     {
@@ -57,8 +55,7 @@
     "backgroundColor": "#fff",
     "color": "#7C7C7C",
     "selectedColor": "#EAB997",
-    "list": [
-      {
+    "list": [{
         "pagePath": "pages/index/index",
         "text": "画作",
         "iconPath": "static/tabs-icon/home.png",

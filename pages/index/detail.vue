@@ -59,7 +59,7 @@ export default {
   },
   methods: {
     toDraw() {
-      this.$store.commit('SET_DRAW_KEYWORDS', this.data.chinesePrompt)
+      this.$store.commit('SET_DRAW_KEYWORDS', this.data)
       uni.switchTab({
         url: '/pages/draw/draw'
       })
