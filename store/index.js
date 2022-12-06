@@ -121,9 +121,7 @@ const store = new Vuex.Store({
       commit
     }) {
       try {
-        let {
-          serverData
-        } = await AV.Cloud.run('getSharePlan')
+        let { serverData } = await AV.Cloud.run('getSharePlan')
         commit('SET_SHARE_OBJ', serverData)
       } catch (e) {
         //TODO handle the exception
@@ -134,12 +132,10 @@ const store = new Vuex.Store({
       commit
     }) {
       try {
-        const {
-          attributes
-        } = await AV.Cloud.run('getUserScore')
+        const res = await AV.Cloud.run('getUserScore')
         commit('saveUserInfo', {
           ...state.userInfo,
-          attributes
+          attributes: res
         })
       } catch (e) {
         //TODO handle the exception

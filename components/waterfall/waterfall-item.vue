@@ -47,11 +47,12 @@
     methods: {
       // 发出组件高度信息，在此处可以区分正确和错误的加载，给予错误的提示图片
       emitHeight(e) {
-        const query = uni.createSelectorQuery().in(this);
-        query.select('.waterfall-item-container').boundingClientRect(data => {
-          let height = Math.floor(data.height);
-          this.$emit("height", height, this.$props.tag);
-        }).exec();
+        // const query = uni.createSelectorQuery().in(this);
+        // query.select('.waterfall-item-container').boundingClientRect(data => {
+        //   let height = Math.floor(data.height);
+        //   this.$emit("height", height, this.$props.tag);
+        // }).exec();
+         this.$emit("height", 300, this.$props.tag);
       },
       onTap() {
         this.$emit("click", this.$props.index, this.$props.tag);

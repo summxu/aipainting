@@ -47,7 +47,7 @@ export default {
         // 是否可以加载
         load: true,
         // 每页的请求条件
-        rows: 20,
+        rows: 10,
         // 页码
         page: 0,
         // 数据列表
@@ -105,8 +105,8 @@ export default {
       // 设置组件状态为 等待加载
       this.waterfall.status = 'await'
 
-      // 如果数量小于20个，继续请求，解决数量过少不触发底部的问题
-      if (this.ajax.dataList.length < 20) {
+      // 如果数量小于10个，继续请求，解决数量过少不触发底部的问题
+      if (this.ajax.dataList.length < 10) {
         this.getList()
       }
     },

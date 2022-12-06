@@ -134,12 +134,20 @@
     methods: {
       async userShareTask() {
         try {
-          await AV.Cloud.run('userShareTask')
+          const { error } = await AV.Cloud.run('userShareTask')
           uni.showToast({
             title: '分享成功！',
             icon: 'success',
             mask: true
           })
+          if (error) {
+            uni.showToast({
+              title: error,
+              icon: 'none',
+              mask: true
+            })
+            return
+          }
           this.$store.dispatch('flushUserInfo')
         } catch (error) {
           uni.showToast({
@@ -179,13 +187,22 @@
       },
       async signinHandle() {
         try {
-          await AV.Cloud.run('userSignIn')
+          const { error } = await AV.Cloud.run('userSignIn')
+          if (error) {
+            uni.showToast({
+              title: error,
+              icon: 'none',
+              mask: true
+            })
+            return
+          }
           this.$store.dispatch('flushUserInfo')
           uni.showToast({
             title: '签到成功',
             icon: 'success',
             mask: true
           })
+
         } catch (error) {
           uni.showToast({
             title: error.message.split(' ')[0],
