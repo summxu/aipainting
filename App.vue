@@ -1,142 +1,146 @@
 <script>
-import store from './store/index.js'
-export default {
-  onLaunch: async function () {
-    // 获取分享信息
-    store.dispatch('getSharePlan')
-    // 获取系统信息
-    store.commit('getHeaderHeight')
-  },
-  onShow: function () {
-    console.log('App Show')
-  },
-  onHide: function () {
-    console.log('App Hide')
+  import store from './store/index.js'
+  export default {
+    onLaunch: async function() {
+      // 获取分享信息
+      store.dispatch('getSharePlan')
+      // 获取系统信息
+      store.commit('getHeaderHeight')
+    },
+    onShow: function() {
+      console.log('App Show')
+    },
+    onHide: function() {
+      console.log('App Hide')
+    }
   }
-}
 </script>
 
 <style lang="scss">
-@import 'uview-ui/index.scss';
+  @import 'uview-ui/index.scss';
 
-/*每个页面公共css */
-page {
-  background-color: #E8E8E8;
-}
+  image {
+    height: auto
+  }
 
-html {
-  font-size: 14px;
-}
+  /*每个页面公共css */
+  page {
+    background-color: #E8E8E8;
+  }
 
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    'Microsoft Yahei', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  html {
+    font-size: 14px;
+  }
 
-view,
-image,
-text {
-  box-sizing: border-box;
-  flex-shrink: 0;
-}
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      'Microsoft Yahei', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-#app {
-  width: 100vw;
-  height: 100vh;
-}
+  view,
+  image,
+  text {
+    box-sizing: border-box;
+    flex-shrink: 0;
+  }
 
-.flex-row {
-  display: flex;
-  flex-direction: row;
-}
+  #app {
+    width: 100vw;
+    height: 100vh;
+  }
 
-.flex-col {
-  display: flex;
-  flex-direction: column;
-}
+  .flex-row {
+    display: flex;
+    flex-direction: row;
+  }
 
-.flex-wrap {
-  display: flex;
-  flex-wrap: wrap;
-}
+  .flex-col {
+    display: flex;
+    flex-direction: column;
+  }
 
-.justify-start {
-  display: flex;
-  justify-content: flex-start;
-}
+  .flex-wrap {
+    display: flex;
+    flex-wrap: wrap;
+  }
 
-.justify-center {
-  display: flex;
-  justify-content: center;
-}
+  .justify-start {
+    display: flex;
+    justify-content: flex-start;
+  }
 
-.justify-end {
-  display: flex;
-  justify-content: flex-end;
-}
+  .justify-center {
+    display: flex;
+    justify-content: center;
+  }
 
-.justify-evenly {
-  display: flex;
-  justify-content: space-evenly;
-}
+  .justify-end {
+    display: flex;
+    justify-content: flex-end;
+  }
 
-.justify-around {
-  display: flex;
-  justify-content: space-around;
-}
+  .justify-evenly {
+    display: flex;
+    justify-content: space-evenly;
+  }
 
-.justify-between {
-  display: flex;
-  justify-content: space-between;
-}
+  .justify-around {
+    display: flex;
+    justify-content: space-around;
+  }
 
-.items-start {
-  display: flex;
-  align-items: flex-start;
-}
+  .justify-between {
+    display: flex;
+    justify-content: space-between;
+  }
 
-.items-center {
-  display: flex;
-  align-items: center;
-}
+  .items-start {
+    display: flex;
+    align-items: flex-start;
+  }
 
-.items-end {
-  display: flex;
-  align-items: flex-end;
-}
+  .items-center {
+    display: flex;
+    align-items: center;
+  }
 
-// 自定义
-.container {
-  padding: 10px;
-  background-color: #fff;
-}
+  .items-end {
+    display: flex;
+    align-items: flex-end;
+  }
 
-.page-bottom {
-  padding-bottom: 15px;
-}
+  // 自定义
+  .container {
+    padding: 10px;
+    background-color: #fff;
+  }
 
-.mt {
-  margin-top: 10px;
-}
+  .page-bottom {
+    padding-bottom: 15px;
+  }
 
-.mt20 {
-  margin-top: 10px;
-}
+  .mt {
+    margin-top: 10px;
+  }
 
-.mb {
-  margin-bottom: 10px;
-}
+  .mt20 {
+    margin-top: 10px;
+  }
 
-.pd {
-  padding: 10px;
-}
+  .mb {
+    margin-bottom: 10px;
+  }
 
-.xcc_label {
-  font-size: 13px;
-  color: $uni-color-subtitle;
-}
+  .pd {
+    padding: 10px;
+  }
+
+  .xcc_label {
+    font-size: 13px;
+    color: $uni-color-subtitle;
+  }
 </style>

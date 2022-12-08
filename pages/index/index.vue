@@ -102,6 +102,7 @@
     image {
       display: block;
       width: 100%;
+      height: 300rpx!important;
     }
 
     .content {

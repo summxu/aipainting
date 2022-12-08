@@ -29,7 +29,7 @@
     }]">
       <!-- <scroll-view scroll-y class="list" :scroll-top="scrollTop" @scrolltolower="loadMore" :style="getHeight"> -->
       <!-- 数据集插槽 -->
-      <u-empty marginTop="100" iconSize="64" textSize="20" v-if="!!!dataList.length">
+      <u-empty marginTop="100" iconSize="64" textSize="20" v-if="status!= 'loading' && !dataList.length">
       </u-empty>
       <view v-if="!!dataList.length">
         <slot></slot>
