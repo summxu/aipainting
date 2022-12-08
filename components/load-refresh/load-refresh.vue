@@ -1,442 +1,446 @@
 <template>
-	<view class="load-refresh">
-		<!-- 刷新动画，可自定义，占高100rpx -->
-		<view class="animation" :style="{ '--color': color }">
-			<view v-if="moveY && !playState" class="remind">
-				{{ moving ? '↑ 松开释放' : '↓ 下拉刷新' }}
-			</view>
-			<view v-if="playState && refreshType === 'hollowDots'" class="refresh hollow-dots-spinner">
-				<view class="dot"></view>
-				<view class="dot"></view>
-				<view class="dot"></view>
-			</view>
-			<view v-if="playState && refreshType === 'halfCircle'" class="refresh half-circle-spinner">
-				<view class="circle circle-1"></view>
-				<view class="circle circle-2"></view>
-			</view>
-			<view v-if="playState && refreshType === 'swappingSquares'" class="refresh swapping-squares-spinner">
-				<view class="square"></view>
-				<view class="square"></view>
-				<view class="square"></view>
-				<view class="square"></view>
-			</view>
-		</view>
-		<!-- 数据列表块 -->
-		<view class="cover-container" :style="[{
+  <view class="load-refresh">
+    <!-- 刷新动画，可自定义，占高100rpx -->
+    <view class="animation" :style="{ '--color': color }">
+      <view v-if="moveY && !playState" class="remind">
+        {{ moving ? '↑ 松开释放' : '↓ 下拉刷新' }}
+      </view>
+      <view v-if="playState && refreshType === 'hollowDots'" class="refresh hollow-dots-spinner">
+        <view class="dot"></view>
+        <view class="dot"></view>
+        <view class="dot"></view>
+      </view>
+      <view v-if="playState && refreshType === 'halfCircle'" class="refresh half-circle-spinner">
+        <view class="circle circle-1"></view>
+        <view class="circle circle-2"></view>
+      </view>
+      <view v-if="playState && refreshType === 'swappingSquares'" class="refresh swapping-squares-spinner">
+        <view class="square"></view>
+        <view class="square"></view>
+        <view class="square"></view>
+        <view class="square"></view>
+      </view>
+    </view>
+    <!-- 数据列表块 -->
+    <view class="cover-container" :style="[{
       background: backgroundCover,
       transform: coverTransform,
       transition: coverTransition
     }]">
-			<!-- <scroll-view scroll-y class="list" :scroll-top="scrollTop" @scrolltolower="loadMore" :style="getHeight"> -->
-			<!-- 数据集插槽 -->
-			<u-empty marginTop="100" iconSize="64" textSize="20" v-if="!!!dataList.length">
-			</u-empty>
-			<view v-if="!!dataList.length">
-				<slot></slot>
-			</view>
-			<u-loadmore v-if="!!dataList.length" height="50" line :status="status" />
-			<!-- 上拉加载 -->
-			<!-- <view class="load-more">{{loadText}}</view> -->
-			<!-- </scroll-view> -->
-		</view>
-	</view>
+      <!-- <scroll-view scroll-y class="list" :scroll-top="scrollTop" @scrolltolower="loadMore" :style="getHeight"> -->
+      <!-- 数据集插槽 -->
+      <u-empty marginTop="100" iconSize="64" textSize="20" v-if="!!!dataList.length">
+      </u-empty>
+      <view v-if="!!dataList.length">
+        <slot></slot>
+      </view>
+      <u-loadmore v-if="!!dataList.length" height="50" line :status="status" />
+      <!-- 上拉加载 -->
+      <!-- <view class="load-more">{{loadText}}</view> -->
+      <!-- </scroll-view> -->
+    </view>
+  </view>
 </template>
 
 <script>
-	import {
-		isBottom
-	} from "./isBottom";
-	export default {
-		name: 'loadRefresh',
-		props: {
-			request: {
-				type: Function,
-				default: () => {}
-			},
-			isRefresh: {
-				type: Boolean,
-				default: true
-			},
-			refreshType: {
-				type: String,
-				default: 'hollowDots'
-			},
-			fixedHeight: {
-				type: String,
-				default: '0'
-			},
-			heightReduce: {
-				type: String,
-				default: '0'
-			},
-			color: {
-				type: String,
-				default: '#04C4C4'
-			},
-			backgroundCover: {
-				type: String,
-				default: 'transparent'
-			},
-			params: {
-				type: Object,
-				default: () => ({})
-			},
-			init: {
-				type: Boolean,
-				default: true
-			}
-		},
-		data() {
-			return {
-				scroll_: null,
-				status: 'nomore',
-				dataList: [],
-				total: 0,
-				totalPages: 1,
-				currentPage: 1,
-				pageSize: 20,
-				startY: 0,
-				moveY: 0,
-				updating: false, // 数据更新状态（true: 更新中）
-				updateType: true, // 数据更新类型（true: 下拉刷新: false: 加载更多）
-				moving: false,
-				scrollTop: -1,
-				coverTransform: 'translateY(0px)',
-				coverTransition: '0s',
-				playState: false // 动画的状态 暂停 paused/开始 running
-			}
-		},
-		computed: {
-			// 计算组件所占屏幕高度
-			getHeight() {
-				// rpx = px / uni.getSystemInfoSync().windowWidth * 750
-				if (Number(this.fixedHeight)) {
-					return `height: ${this.fixedHeight}rpx;`
-				} else {
-					let height = uni.getSystemInfoSync().windowHeight - uni.upx2px(0 + this.heightReduce)
-					return `height: ${height}px;`
-				}
-			},
-			// 判断loadText，可以根据需求自定义
-			loadText() {
-				const {
-					currentPage,
-					totalPages,
-					total,
-					updating,
-					dataList,
-					updateType
-				} = this
-				if (!updateType && updating) {
-					return '加载中...'
-					// } else if (currentPage < totalPages) {
-				} else if (dataList.length < total) {
-					return '上拉加载更多'
-				} else {
-					return '已经到底啦~'
-				}
-			}
-		},
-		created() {
-			if (this.init) {
-				this.query(1)
-			}
-		},
-		methods: {
-			scrollHandle() {
-				//为了保证兼容性，这里取两个值，哪个有值取哪一个
-				//scrollTop就是触发滚轮事件时滚轮的高度
-				if (isBottom() && this.dataList.length < this.total) {
-					this.query()
-				}
-			},
-			// 请求
-			async query(init) {
-				if (init) {
-					this.currentPage = 1
-				}
-				try {
-					this.status = 'loading'
-					const {
-						data
-					} = await this.request({
-						pageNum: this.currentPage,
-						pageSize: this.pageSize,
-						...this.params
-					})
+  import {
+    isBottom
+  } from "./isBottom";
+  export default {
+    name: 'loadRefresh',
+    props: {
+      request: {
+        type: Function,
+        default: () => {}
+      },
+      isRefresh: {
+        type: Boolean,
+        default: true
+      },
+      refreshType: {
+        type: String,
+        default: 'hollowDots'
+      },
+      fixedHeight: {
+        type: String,
+        default: '0'
+      },
+      heightReduce: {
+        type: String,
+        default: '0'
+      },
+      color: {
+        type: String,
+        default: '#04C4C4'
+      },
+      backgroundCover: {
+        type: String,
+        default: 'transparent'
+      },
+      params: {
+        type: Object,
+        default: () => ({})
+      },
+      init: {
+        type: Boolean,
+        default: true
+      }
+    },
+    data() {
+      return {
+        scroll_: null,
+        status: 'nomore',
+        dataList: [],
+        total: 0,
+        totalPages: 1,
+        currentPage: 0,
+        pageSize: 20,
+        startY: 0,
+        moveY: 0,
+        updating: false, // 数据更新状态（true: 更新中）
+        updateType: true, // 数据更新类型（true: 下拉刷新: false: 加载更多）
+        moving: false,
+        scrollTop: -1,
+        coverTransform: 'translateY(0px)',
+        coverTransition: '0s',
+        playState: false // 动画的状态 暂停 paused/开始 running
+      }
+    },
+    computed: {
+      // 计算组件所占屏幕高度
+      getHeight() {
+        // rpx = px / uni.getSystemInfoSync().windowWidth * 750
+        if (Number(this.fixedHeight)) {
+          return `height: ${this.fixedHeight}rpx;`
+        } else {
+          let height = uni.getSystemInfoSync().windowHeight - uni.upx2px(0 + this.heightReduce)
+          return `height: ${height}px;`
+        }
+      },
+      // 判断loadText，可以根据需求自定义
+      loadText() {
+        const {
+          currentPage,
+          totalPages,
+          total,
+          updating,
+          dataList,
+          updateType
+        } = this
+        if (!updateType && updating) {
+          return '加载中...'
+          // } else if (currentPage < totalPages) {
+        } else if (dataList.length < total) {
+          return '上拉加载更多'
+        } else {
+          return '已经到底啦~'
+        }
+      }
+    },
+    created() {
+      if (this.init) {
+        this.query(1)
+      }
+    },
+    methods: {
+      scrollHandle() {
+        //为了保证兼容性，这里取两个值，哪个有值取哪一个
+        //scrollTop就是触发滚轮事件时滚轮的高度
+        if (isBottom() && this.dataList.length < this.total) {
+          this.query()
+        }
+      },
+      // 请求
+      async query(init) {
+        if (init) {
+          this.currentPage = 0
+        }
+        try {
+          this.status = 'loading'
+          const res = await this.request({
+            skip: this.currentPage,
+            limit: this.pageSize,
+            ...this.params
+          })
 
+          const data = res.map((item) => ({
+            ...item.serverData,
+            id: item.serverData.objectId,
+            title: item.serverData.chinesePrompt
+          }))
 
-					this.completed()
+          this.completed()
 
-					if (this.currentPage === 1) {
-						this.dataList = data.list 
-					} else {
-						this.dataList = this.dataList.concat(data.list)
-					}
-					this.status = 'nomore'
-					// console.log(this.dataList)
-					this.$emit('complete', this.dataList)
-					this.pageCount = data.pagesCount
-					this.total = data.total
+          if (this.currentPage === 0) {
+            this.dataList = data
+          } else {
+            this.dataList = this.dataList.concat(data)
+          }
+          
+          this.status = 'nomore'
+          // console.log(this.dataList)
+          this.$emit('complete', this.dataList)
+          this.pageCount = data.length
+          this.total = data.total
 
-					// this.loadMore()
-				} catch (error) {
-					console.log(error)
-				}
-			},
-			// 根据currentPage和pageCount的值来判断 是否触发@loadMore
-			loadMore() {
-				const {
-					currentPage,
-					pageCount,
-					total
-				} = this
-				// console.log(pageCount)
-				if (!this.updating && this.dataList.length < total) {
-					this.currentPage += 1
-					this.updating = true
-					this.updateType = false
-					this.$emit('loadMore')
-					this.query()
-				}
-			},
-			// 回弹效果
-			coverTouchstart(e) {
-				if (!this.isRefresh) {
-					return
-				}
-				this.coverTransition = 'transform .1s linear'
-				this.startY = e.touches[0].clientY
-			},
-			coverTouchmove(e) {
-				if (!this.isRefresh || this.updating) {
-					return
-				}
+          // this.loadMore()
+        } catch (error) {
+          console.log(error)
+        }
+      },
+      // 根据currentPage和pageCount的值来判断 是否触发@loadMore
+      loadMore() {
+        const {
+          currentPage,
+          pageCount,
+          total
+        } = this
+        // console.log(pageCount)
+        if (!this.updating && this.pageCount >= this.pageSize) {
+          this.currentPage += this.pageSize
+          this.updating = true
+          this.updateType = false
+          this.$emit('loadMore')
+          this.query()
+        }
+      },
+      // 回弹效果
+      coverTouchstart(e) {
+        if (!this.isRefresh) {
+          return
+        }
+        this.coverTransition = 'transform .1s linear'
+        this.startY = e.touches[0].clientY
+      },
+      coverTouchmove(e) {
+        if (!this.isRefresh || this.updating) {
+          return
+        }
 
-				this.moveY = e.touches[0].clientY
-				let moveDistance = this.moveY - this.startY
-				if (moveDistance <= 0) return false
-				if (moveDistance <= 50) {
-					this.coverTransform = `translateY(${moveDistance}px)`
-				}
-				this.moving = moveDistance >= 50
-			},
-			coverTouchend() {
-				if (!this.isRefresh || this.updating) {
-					return
-				}
-				if (this.moving) {
-					this.runRefresh()
-				} else {
-					this.coverTransition = 'transform 0.3s cubic-bezier(.21,1.93,.53,.64)'
-					this.coverTransform = 'translateY(0px)'
-				}
-			},
-			runRefresh() {
-				this.moveY = 0
-				this.scrollTop = 0
-				this.coverTransition = 'transform .1s linear'
-				this.coverTransform = 'translateY(50px)'
-				this.playState = true
-				this.updating = true
-				this.updateType = true
-				this.$emit('refresh')
-				this.query(1)
-			},
-			completed() {
-				if (this.updateType) {
-					// 下拉刷新
-					this.moving = false
-					this.scrollTop = -1
-					this.coverTransition = 'transform 0.3s cubic-bezier(.21,1.93,.53,.64)'
-					this.coverTransform = 'translateY(0px)'
-					setTimeout(() => {
-						this.playState = false
-					}, 300)
-				}
-				this.updating = false
-			}
-		}
-	}
+        this.moveY = e.touches[0].clientY
+        let moveDistance = this.moveY - this.startY
+        if (moveDistance <= 0) return false
+        if (moveDistance <= 50) {
+          this.coverTransform = `translateY(${moveDistance}px)`
+        }
+        this.moving = moveDistance >= 50
+      },
+      coverTouchend() {
+        if (!this.isRefresh || this.updating) {
+          return
+        }
+        if (this.moving) {
+          this.runRefresh()
+        } else {
+          this.coverTransition = 'transform 0.3s cubic-bezier(.21,1.93,.53,.64)'
+          this.coverTransform = 'translateY(0px)'
+        }
+      },
+      runRefresh() {
+        this.moveY = 0
+        this.scrollTop = 0
+        this.coverTransition = 'transform .1s linear'
+        this.coverTransform = 'translateY(50px)'
+        this.playState = true
+        this.updating = true
+        this.updateType = true
+        this.$emit('refresh')
+        this.query(1)
+      },
+      completed() {
+        if (this.updateType) {
+          // 下拉刷新
+          this.moving = false
+          this.scrollTop = -1
+          this.coverTransition = 'transform 0.3s cubic-bezier(.21,1.93,.53,.64)'
+          this.coverTransform = 'translateY(0px)'
+          setTimeout(() => {
+            this.playState = false
+          }, 300)
+        }
+        this.updating = false
+      }
+    }
+  }
 </script>
 
 <style lang="scss" scoped>
-	$color: var(--color);
+  $color: var(--color);
 
-	/deep/.u-loadmore__content__text {
-		line-height: 15px !important;
-	}
+  /deep/.u-loadmore__content__text {
+    line-height: 15px !important;
+  }
 
-	.load-refresh {
-		margin: 0;
-		padding: 0;
-		width: 100%;
+  .load-refresh {
+    margin: 0;
+    padding: 0;
+    width: 100%;
 
-		.cover-container {
-			width: 100%;
-			margin-top: -100rpx;
+    .cover-container {
+      width: 100%;
+      margin-top: -100rpx;
 
-			.list {
-				width: 100%;
+      .list {
+        width: 100%;
 
-				.load-more {
-					font-size: 20rpx;
-					text-align: center;
-					color: #AAAAAA;
-					padding: 16rpx;
-				}
-			}
-		}
-	}
+        .load-more {
+          font-size: 20rpx;
+          text-align: center;
+          color: #AAAAAA;
+          padding: 16rpx;
+        }
+      }
+    }
+  }
 
-	/* 动画 */
-	.animation {
-		width: 100%;
-		height: 100rpx;
+  /* 动画 */
+  .animation {
+    width: 100%;
+    height: 100rpx;
 
-		.remind {
-			width: 100%;
-			height: 100rpx;
-			text-align: center;
-			line-height: 100rpx;
-		}
+    .remind {
+      width: 100%;
+      height: 100rpx;
+      text-align: center;
+      line-height: 100rpx;
+    }
 
-		.refresh {
-			width: 100%;
-			height: 100rpx;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			box-sizing: border-box;
+    .refresh {
+      width: 100%;
+      height: 100rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
 
-			view {
-				// animation-play-state: $playState!important;
-			}
-		}
+      view {
+        // animation-play-state: $playState!important;
+      }
+    }
 
-		/* HollowDots  */
-		.hollow-dots-spinner .dot {
-			width: 30rpx;
-			height: 30rpx;
-			margin: 0 calc(30rpx / 2);
-			border: calc(30rpx / 5) solid $color;
-			border-radius: 50%;
-			float: left;
-			transform: scale(0);
-			animation: hollowDots 1000ms ease infinite 0ms;
-		}
+    /* HollowDots  */
+    .hollow-dots-spinner .dot {
+      width: 30rpx;
+      height: 30rpx;
+      margin: 0 calc(30rpx / 2);
+      border: calc(30rpx / 5) solid $color;
+      border-radius: 50%;
+      float: left;
+      transform: scale(0);
+      animation: hollowDots 1000ms ease infinite 0ms;
+    }
 
-		.hollow-dots-spinner .dot:nth-child(1) {
-			animation-delay: calc(300ms * 1);
-		}
+    .hollow-dots-spinner .dot:nth-child(1) {
+      animation-delay: calc(300ms * 1);
+    }
 
-		.hollow-dots-spinner .dot:nth-child(2) {
-			animation-delay: calc(300ms * 2);
-		}
+    .hollow-dots-spinner .dot:nth-child(2) {
+      animation-delay: calc(300ms * 2);
+    }
 
-		.hollow-dots-spinner .dot:nth-child(3) {
-			animation-delay: calc(300ms * 3);
-		}
+    .hollow-dots-spinner .dot:nth-child(3) {
+      animation-delay: calc(300ms * 3);
+    }
 
-		@keyframes hollowDots {
-			50% {
-				transform: scale(1);
-				opacity: 1;
-			}
+    @keyframes hollowDots {
+      50% {
+        transform: scale(1);
+        opacity: 1;
+      }
 
-			100% {
-				opacity: 0;
-			}
-		}
+      100% {
+        opacity: 0;
+      }
+    }
 
-		/* halfCircle  */
-		.half-circle-spinner .circle {
-			content: "";
-			position: absolute;
-			width: 60rpx;
-			height: 60rpx;
-			border-radius: 100%;
-			border: calc(60rpx / 10) solid transparent;
-		}
+    /* halfCircle  */
+    .half-circle-spinner .circle {
+      content: "";
+      position: absolute;
+      width: 60rpx;
+      height: 60rpx;
+      border-radius: 100%;
+      border: calc(60rpx / 10) solid transparent;
+    }
 
-		.half-circle-spinner .circle.circle-1 {
-			border-top-color: $color;
-			animation: halfCircle 1s infinite;
-		}
+    .half-circle-spinner .circle.circle-1 {
+      border-top-color: $color;
+      animation: halfCircle 1s infinite;
+    }
 
-		.half-circle-spinner .circle.circle-2 {
-			border-bottom-color: $color;
-			animation: halfCircle 1s infinite alternate;
-		}
+    .half-circle-spinner .circle.circle-2 {
+      border-bottom-color: $color;
+      animation: halfCircle 1s infinite alternate;
+    }
 
-		@keyframes halfCircle {
-			0% {
-				transform: rotate(0deg);
-			}
+    @keyframes halfCircle {
+      0% {
+        transform: rotate(0deg);
+      }
 
-			100% {
-				transform: rotate(360deg);
-			}
-		}
+      100% {
+        transform: rotate(360deg);
+      }
+    }
 
-		/* swappingSquares */
-		.swapping-squares-spinner {
-			position: relative;
-		}
+    /* swappingSquares */
+    .swapping-squares-spinner {
+      position: relative;
+    }
 
-		.swapping-squares-spinner .square {
-			height: calc(65rpx * 0.25 / 1.3);
-			width: calc(65rpx * 0.25 / 1.3);
-			animation-duration: 1000ms;
-			border: calc(65rpx * 0.04 / 1.3) solid $color;
-			margin-right: auto;
-			margin-left: auto;
-			position: absolute;
-			animation-iteration-count: infinite;
-		}
+    .swapping-squares-spinner .square {
+      height: calc(65rpx * 0.25 / 1.3);
+      width: calc(65rpx * 0.25 / 1.3);
+      animation-duration: 1000ms;
+      border: calc(65rpx * 0.04 / 1.3) solid $color;
+      margin-right: auto;
+      margin-left: auto;
+      position: absolute;
+      animation-iteration-count: infinite;
+    }
 
-		.swapping-squares-spinner .square:nth-child(1) {
-			animation-name: swappingSquares-child-1;
-			animation-delay: 500ms;
-		}
+    .swapping-squares-spinner .square:nth-child(1) {
+      animation-name: swappingSquares-child-1;
+      animation-delay: 500ms;
+    }
 
-		.swapping-squares-spinner .square:nth-child(2) {
-			animation-name: swappingSquares-child-2;
-			animation-delay: 0ms;
-		}
+    .swapping-squares-spinner .square:nth-child(2) {
+      animation-name: swappingSquares-child-2;
+      animation-delay: 0ms;
+    }
 
-		.swapping-squares-spinner .square:nth-child(3) {
-			animation-name: swappingSquares-child-3;
-			animation-delay: 500ms;
-		}
+    .swapping-squares-spinner .square:nth-child(3) {
+      animation-name: swappingSquares-child-3;
+      animation-delay: 500ms;
+    }
 
-		.swapping-squares-spinner .square:nth-child(4) {
-			animation-name: swappingSquares-child-4;
-			animation-delay: 0ms;
-		}
+    .swapping-squares-spinner .square:nth-child(4) {
+      animation-name: swappingSquares-child-4;
+      animation-delay: 0ms;
+    }
 
-		@keyframes swappingSquares-child-1 {
-			50% {
-				transform: translate(150%, 150%) scale(2, 2);
-			}
-		}
+    @keyframes swappingSquares-child-1 {
+      50% {
+        transform: translate(150%, 150%) scale(2, 2);
+      }
+    }
 
-		@keyframes swappingSquares-child-2 {
-			50% {
-				transform: translate(-150%, 150%) scale(2, 2);
-			}
-		}
+    @keyframes swappingSquares-child-2 {
+      50% {
+        transform: translate(-150%, 150%) scale(2, 2);
+      }
+    }
 
-		@keyframes swappingSquares-child-3 {
-			50% {
-				transform: translate(-150%, -150%) scale(2, 2);
-			}
-		}
+    @keyframes swappingSquares-child-3 {
+      50% {
+        transform: translate(-150%, -150%) scale(2, 2);
+      }
+    }
 
-		@keyframes swappingSquares-child-4 {
-			50% {
-				transform: translate(150%, -150%) scale(2, 2);
-			}
-		}
-	}
+    @keyframes swappingSquares-child-4 {
+      50% {
+        transform: translate(150%, -150%) scale(2, 2);
+      }
+    }
+  }
 </style>
