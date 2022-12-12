@@ -68,7 +68,7 @@
     </view>
 
     <!-- 二次确认 -->
-    <u-modal :show="modalShow" title="生成将消耗3点作画数" @cancel="modalShow = false" @confirm="confirmHadnle" showCancelButton :content='content'></u-modal>
+    <u-modal :show="modalShow" title="开始画 (消耗3点)" @cancel="modalShow = false" @confirm="confirmHadnle" showCancelButton :content='content'></u-modal>
   </view>
 </template>
 
