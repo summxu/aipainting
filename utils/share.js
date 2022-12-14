@@ -20,7 +20,7 @@ module.exports = {
       if (this.$x.pageRouter) {
         this.$x.mpShare = {
           title, // 分享标题
-          path: '/pages/index/index', // 默认为当前页面路径
+          path: '/pages/draw/draw', // 默认为当前页面路径
           imageUrl: image.serverData.url // 默认为当前页面的截图
         }
       }
