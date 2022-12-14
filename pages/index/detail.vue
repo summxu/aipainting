@@ -12,7 +12,7 @@
 
     <view v-if="!isExample" class="container mb">
       <view class="xcc_label">作品ID：{{data.objectId}}</view>
-      <view class="alert mt"> *本图片为用户输入关键词由AI生成，请在符合相关法律法规政策的情况下分享和使用，请勿生成或传播色情及铭感内容</view>
+      <view class="alert mt">*本图片由AI根据用户输入的关键词生成，请在符合相关法律法规政策的前提下使用和分享，请勿生成、传播色情或敏感内容。</view>
     </view>
 
     <view class="container">
@@ -33,7 +33,7 @@
         <u-button @click="handleDownImg" :disabled="data.status == 0" type="success" shape="circle" text="保存图片">
         </u-button>
       </view>
-      <u-button @click="toDraw" type="primary" shape="circle" text="使用当前关键词让画头酱再画一次"></u-button>
+      <u-button @click="toDraw" type="primary" shape="circle" text="使用当前关键词再画一次"></u-button>
     </view>
 
     <view v-else class="mt flex-row pd">
